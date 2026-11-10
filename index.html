@@ -32,7 +32,7 @@ a{color:#2A2D3E}a:hover{color:#5A5F7A}
 [data-a=visual]{width:100%;max-width:520px;justify-self:center}
 [data-r=smeta-m]{display:none}
 @media (min-width:960px){[data-r=hero]{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);column-gap:clamp(40px,4.5vw,72px);padding-top:clamp(32px,3.6vw,52px)}[data-r=hero]>*{grid-column:1}[data-r=hero]>[data-a=visual]{grid-column:2;grid-row:1 / span 8;align-self:center;max-width:560px}}
-@media (max-width:640px){[data-r=hdate]{order:3;flex-basis:100%}#meno-dietata{font-size:26px!important;height:50px!important}[data-r=smeta]{display:none}[data-r=smeta-m]{display:block;font-size:13px;color:#3E4258}[data-r=stitle]{display:block;max-width:100%;font-size:15px!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}[data-r=header]{column-gap:10px!important}[data-r=header]>p:first-child{font-size:20px!important}}
+@media (max-width:640px){[data-r=hdate]{order:3;flex-basis:100%}#meno-dietata{font-size:26px!important;height:50px!important}[data-r=smeta]{display:none}[data-r=smeta-m]{display:block;font-size:13px;color:#3E4258}[data-r=stitle]{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;max-width:100%;font-size:15px!important;line-height:1.2!important;overflow:hidden}[data-r=header]{column-gap:10px!important}[data-r=header]>p:first-child{font-size:20px!important}}
 #meno-dietata:focus{outline:none;border-bottom-style:solid!important;box-shadow:0 2px 0 0 #45454D}
 @media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}[style*="stroke-dashoffset"]{stroke-dashoffset:0!important}}
 </style>
@@ -586,7 +586,7 @@ a{color:#2A2D3E}a:hover{color:#5A5F7A}
 
 <div style="position: sticky; bottom: 0; z-index: 30; background: #FBF8F1; border-top: 1.6px solid #45454D; box-shadow: 0 -3px 0 rgba(69, 69, 77, 0.12);">
 <div style="max-width: 1280px; margin: 0 auto; padding: 10px clamp(16px, 4vw, 48px); display: flex; align-items: center; justify-content: space-between; gap: 12px 20px;">
-<p style="margin: 0; flex: 1 1 auto; min-width: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 16px;"><span data-r="stitle" style="font-family: 'Shantell Sans', 'Nunito', system-ui, sans-serif; font-weight: 700; font-variation-settings: 'INFM' 100, 'BNCE' 35; font-size: 19px; line-height: 1.25;">Adventná rozprávka s menom vášho dieťaťa</span><span data-r="smeta" style="font-size: 14px; color: #3E4258;">Adventná: 13 € · s audiom 25 € · na 1. 12. objednajte do 24. 11.</span><span data-r="smeta-m">adventná od 13 €, s audiom 25 €</span></p>
+<p style="margin: 0; flex: 1 1 auto; min-width: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 16px;"><span data-r="stitle" style="font-family: 'Shantell Sans', 'Nunito', system-ui, sans-serif; font-weight: 700; font-variation-settings: 'INFM' 100, 'BNCE' 35; font-size: 19px; line-height: 1.25;">Adventná rozprávka s menom vášho dieťaťa</span><span data-r="smeta" style="font-size: 14px; color: #3E4258;">Adventná: 13 € · s audiom 25 € · na 1. 12. objednajte do 24. 11.</span><span data-r="smeta-m">adventná od 13&nbsp;€, s&nbsp;audiom 25&nbsp;€</span></p>
 <a href="/objednavka/" style="flex: none; display: inline-flex; align-items: center; justify-content: center; min-height: 48px; box-sizing: border-box; padding: 8px 24px; border: 1.8px solid #45454D; border-radius: 30px 10px 28px 12px / 12px 28px 10px 30px; background: #CF3E2A; color: #FFFFFF; font-weight: 700; font-size: 16px; text-decoration: none;">Objednať</a>
 </div>
 </div>
@@ -1128,7 +1128,7 @@ a{color:#2A2D3E}a:hover{color:#5A5F7A}
 
 <div style="position: sticky; bottom: 0; z-index: 30; background: #FBF8F1; border-top: 1.6px solid #45454D; box-shadow: 0 -3px 0 rgba(69, 69, 77, 0.12);">
 <div style="max-width: 1280px; margin: 0 auto; padding: 10px clamp(16px, 4vw, 48px); display: flex; align-items: center; justify-content: space-between; gap: 12px 20px;">
-<p style="margin: 0; flex: 1 1 auto; min-width: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 16px;"><span data-r="stitle" style="font-family: {{headFont}}; font-weight: {{headWeight}}; font-variation-settings: {{headVar}}; font-size: 19px; line-height: 1.25;">{{stickyTitle}}</span><span data-r="smeta" style="font-size: 14px; color: #3E4258;">Adventná: 13 € · s audiom 25 € · na 1. 12. objednajte do 24. 11.</span><span data-r="smeta-m">adventná od 13 €, s audiom 25 €</span></p>
+<p style="margin: 0; flex: 1 1 auto; min-width: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 16px;"><span data-r="stitle" style="font-family: {{headFont}}; font-weight: {{headWeight}}; font-variation-settings: {{headVar}}; font-size: 19px; line-height: 1.25;">{{stickyTitle}}</span><span data-r="smeta" style="font-size: 14px; color: #3E4258;">Adventná: 13 € · s audiom 25 € · na 1. 12. objednajte do 24. 11.</span><span data-r="smeta-m">adventná od 13&nbsp;€, s&nbsp;audiom 25&nbsp;€</span></p>
 <a href="/objednavka/" style="flex: none; display: inline-flex; align-items: center; justify-content: center; min-height: 48px; box-sizing: border-box; padding: 8px 24px; border: 1.8px solid #45454D; border-radius: 30px 10px 28px 12px / 12px 28px 10px 30px; background: {{accent}}; color: {{onAccent}}; font-weight: 700; font-size: 16px; text-decoration: none;">Objednať</a>
 </div>
 </div>
