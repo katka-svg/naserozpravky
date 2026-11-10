@@ -65,7 +65,9 @@ small{color:var(--muted)}
       <button data-f="odoslana">Odoslané</button>
       <button data-f="all">Všetky</button>
       <button id="reload" style="margin-left:auto">Obnoviť</button>
+      <button id="bE6" title="Pošle prosbu o recenziu všetkým, ktorým už odišla rozprávka">Prosba o recenziu (E6)</button>
     </div>
+    <div id="lmsg2" class="msg"></div>
     <div class="list" id="list"></div>
   </section>
 
@@ -256,6 +258,20 @@ small{color:var(--muted)}
     renderList();
   };
   $('reload').onclick = load;
+  $('bE6').onclick = function () {
+    var btn = this; btn.disabled = true; $('lmsg2').className = 'msg'; $('lmsg2').textContent = 'Zisťujem, komu poslať…';
+    api('e6_davka', { len_pocet: true }).then(function (r) {
+      if (!r.pocet) { $('lmsg2').textContent = 'Nie je komu poslať, všetci s odoslanou rozprávkou už prosbu dostali.'; return; }
+      if (!confirm('Poslať prosbu o recenziu (E6) ' + r.pocet + ' zákazníkom, ktorým už odišla rozprávka?')) { $('lmsg2').textContent = ''; return; }
+      $('lmsg2').textContent = 'Posielam…';
+      return api('e6_davka').then(function (x) {
+        $('lmsg2').className = 'msg' + (x.chyby ? ' err' : ' ok');
+        $('lmsg2').textContent = 'Odoslané: ' + x.odoslane + (x.chyby ? ', neodišlo: ' + x.chyby + ' (pozri históriu objednávky)' : '') +
+          (x.zostava ? '. Zostáva ' + x.zostava + ', klikni znova.' : '.');
+      });
+    }).catch(function (e) { $('lmsg2').className = 'msg err'; $('lmsg2').textContent = e.message; })
+      .then(function () { btn.disabled = false; });
+  };
   $('list').onclick = function (e) { var b = e.target.closest('.item'); if (b) openDetail(b.getAttribute('data-id')); };
   $('back').onclick = load;
   $('pick').onchange = function (e) { upload(e.target.files); e.target.value = ''; };
