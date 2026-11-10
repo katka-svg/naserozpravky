@@ -139,7 +139,8 @@ small{color:var(--muted)}
     $('list').innerHTML = xs.length ? xs.map(function (o) {
       return '<button class="item" data-id="' + o.id + '"><span class="num">' + esc(o.cislo) + '</span>' +
         '<span><b>' + esc(kids(o)) + '</b> <span class="meta">· ' + (o.verzia === 'audio' ? 'PDF + audio' : 'PDF') + (o.darcek ? ' · darček' : '') +
-        ' · ' + eur(o.suma_cents) + ' · ' + when(o.zaplatene_at || o.created_at) + (o.vcas ? ' · do 30. 11.' : ' · do 3 dní') + '</span></span>' +
+        ' · ' + eur(o.suma_cents) + ' · ' + when(o.zaplatene_at || o.created_at) + (o.vcas ? ' · do 30. 11.' : ' · do 3 dní') + '</span>' +
+        (!o.e1_at && o.status !== 'zrusena' ? ' <span class="err" style="font-size:14px;font-weight:700">· potvrdenie neodišlo</span>' : '') + '</span>' +
         '<span class="badge b-' + o.status + '">' + (STAV[o.status] || o.status) + '</span></button>';
     }).join('') : '<p class="meta">Nič tu nie je.</p>';
   }
@@ -155,14 +156,15 @@ small{color:var(--muted)}
     }).join('');
   }
   function openDetail(id) {
-    api('detail', { id: id }).then(function (r) {
+    return api('detail', { id: id }).then(function (r) {
       var o = cur = r.objednavka;
       $('dTitle').textContent = o.cislo + ' · ' + kids(o);
       $('dBadge').className = 'badge b-' + o.status; $('dBadge').textContent = STAV[o.status] || o.status;
       var rows = [['Zákazník', o.meno_zakaznika], ['E-mail', '<a href="mailto:' + esc(o.email) + '">' + esc(o.email) + '</a>'], ['Verzia', o.verzia === 'audio' ? 'PDF + audio' : 'PDF'],
         ['Suma', eur(o.suma_cents) + (o.kod ? ' (kód ' + esc(o.kod) + ')' : '')], ['Zaplatené', when(o.zaplatene_at)], ['Dodať', o.vcas ? 'najneskôr 30. 11.' : 'do 3 pracovných dní'],
+        ['Potvrdenie', o.e1_at ? 'odoslané ' + when(o.e1_at) : '<span class="err">neodišlo, pošli ho znova nižšie</span>'],
         ['Darček', o.darcek ? 'áno' : 'nie'], ['Venovanie', esc(o.venovanie || 'automatická veta')], ['Poznámka', esc(o.poznamka || '')], ['Odporučil', esc(o.odporucil || '')]];
-      $('dInfo').innerHTML = rows.map(function (x) { return '<dt>' + x[0] + '</dt><dd>' + (x[0] === 'E-mail' ? x[1] : (x[1] || '')) + '</dd>'; }).join('');
+      $('dInfo').innerHTML = rows.map(function (x) { return '<dt>' + x[0] + '</dt><dd>' + (x[0] === 'E-mail' || x[0] === 'Potvrdenie' ? x[1] : (x[1] || '')) + '</dd>'; }).join('');
       $('dKids').innerHTML = (o.deti || []).map(function (d) {
         return '<p style="margin:0 0 8px"><b>' + esc(d.meno) + '</b> <span class="meta">· ' + (d.rod === 'f' ? 'dievčatko' : 'chlapček') + '</span><br>' +
           '<span class="meta">bez ' + esc(d.tvary.g) + ' · ' + esc(d.tvary.d) + ' · na ' + esc(d.tvary.a) + ' · ' + esc(sKym(d.tvary.i)) + '</span></p>';
@@ -232,7 +234,8 @@ small{color:var(--muted)}
   function act(btn, akcia, extra, ok, confirmText) {
     if (confirmText && !confirm(confirmText)) return;
     btn.disabled = true; $('emsg').className = 'msg'; $('emsg').textContent = 'Posielam…';
-    api(akcia, Object.assign({ id: cur.id }, extra || {})).then(function () { $('emsg').textContent = ok; openDetail(cur.id); })
+    api(akcia, Object.assign({ id: cur.id }, extra || {})).then(function () { return openDetail(cur.id); })
+      .then(function () { $('emsg').className = 'msg ok'; $('emsg').textContent = ok; })
       .catch(function (e) { $('emsg').className = 'msg err'; $('emsg').textContent = e.message; })
       .then(function () { btn.disabled = false; });
   }
@@ -262,7 +265,7 @@ small{color:var(--muted)}
   drop.ondrop = function (e) { e.preventDefault(); drop.classList.remove('over'); upload(e.dataTransfer.files); };
   $('bE4').onclick = function () { act(this, 'e4', {}, 'E4 je odoslaný.', 'Odoslať zákazníkovi hotovú rozprávku (E4)? Skontrolovala si súbory?'); };
   $('bE2').onclick = function () { act(this, 'e2', { otazka: $('e2t').value }, 'Otázka je odoslaná.', 'Poslať zákazníkovi túto otázku?'); };
-  $('bE1').onclick = function () { act(this, 'e1_znova', {}, 'E1 je odoslaný znova.', 'Znova poslať potvrdenie objednávky?'); };
+  $('bE1').onclick = function () { act(this, 'e1_znova', {}, 'Potvrdenie je odoslané znova.', 'Znova poslať zákazníkovi potvrdenie objednávky (pri darčeku poukaz)?'); };
   $('bCancel').onclick = function () { act(this, 'stav', { status: 'zrusena' }, 'Objednávka je označená ako zrušená. Peniaze vráť v Stripe.', 'Označiť objednávku ako zrušenú?'); };
 
   function start() {
@@ -270,8 +273,8 @@ small{color:var(--muted)}
       var s = r.data.session;
       if (!s) { show('login'); return; }
       $('who').textContent = s.user.email; $('out').classList.remove('hidden');
+      var h = decodeURIComponent(location.hash.slice(1));
       load().then(function () {
-        var h = decodeURIComponent(location.hash.slice(1));
         if (h) { var o = orders.find(function (x) { return x.cislo === h; }); if (o) openDetail(o.id); }
       });
     });
