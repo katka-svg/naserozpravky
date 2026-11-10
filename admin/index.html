@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Administrácia · Naše rozprávky</title>
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/fonts.css">
+<style>
+:root{--ink:#2A2D3E;--muted:#5A5F7A;--line:#45454D;--bg:#FBF8F1;--card:#FFFFFF;--accent:#CF3E2A;--sun:#F4B740;--mint:#E3F4EC;--cream:#FDEFC8}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'DM Sans',Arial,sans-serif;font-size:16px;line-height:1.5}
+h1,h2,h3{font-family:'Shantell Sans','Nunito',sans-serif;font-variation-settings:'INFM' 100,'BNCE' 35;font-weight:700;margin:0;line-height:1.15}
+a{color:var(--ink)}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px clamp(16px,4vw,32px);border-bottom:1.6px solid var(--line);background:var(--bg);position:sticky;top:0;z-index:5}
+header h1{font-size:22px}
+main{max-width:1100px;margin:0 auto;padding:20px clamp(16px,4vw,32px) 60px}
+.card{background:var(--card);border:1.6px solid var(--line);border-radius:22px 10px 20px 12px / 12px 20px 10px 22px;padding:18px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+input[type=email],input[type=password],input[type=text],textarea{width:100%;min-height:46px;padding:10px 12px;border:2px solid #C9CCD9;border-radius:12px;font:inherit;background:#fff;color:var(--ink)}
+textarea{min-height:90px}
+button{font:inherit;font-weight:700;cursor:pointer;border:1.6px solid var(--line);border-radius:22px 10px 20px 12px / 12px 20px 10px 22px;padding:10px 18px;background:#fff;color:var(--ink);min-height:44px}
+button.main{background:var(--accent);color:#fff}
+button:disabled{opacity:.55;cursor:default}
+.tabs button{border-radius:999px;padding:6px 14px;min-height:36px;font-weight:600}
+.tabs button.on{background:var(--ink);color:#fff}
+.list{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+.item{display:grid;grid-template-columns:auto 1fr auto;gap:4px 14px;align-items:center;padding:12px 14px;border:1.4px solid #D8D5CC;border-radius:16px;background:#fff;cursor:pointer;text-align:left}
+.item:hover{border-color:var(--line)}
+.num{font-weight:700}
+.meta{color:var(--muted);font-size:14px}
+.badge{font-size:13px;font-weight:700;padding:3px 10px;border-radius:999px;border:1.4px solid var(--line);white-space:nowrap}
+.b-zaplatena{background:var(--cream)}.b-vo_vyrobe{background:#DCE8FF}.b-odoslana{background:var(--mint)}.b-zrusena{background:#eee;color:#777}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(320px,100%),1fr));gap:16px;margin-top:16px}
+dl{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:0}
+dt{color:var(--muted)}dd{margin:0;font-weight:600}
+.drop{border:2px dashed var(--line);border-radius:18px;padding:18px;text-align:center;background:var(--bg)}
+.drop.over{background:var(--cream)}
+.files{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:14px;margin-top:10px}
+.ok{color:#2E7D5B;font-weight:700}.miss{color:#B3261E;font-weight:700}
+.msg{margin-top:10px;font-weight:600}
+.err{color:#B3261E}
+small{color:var(--muted)}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<header><h1>Naše rozprávky · objednávky</h1><div class="row"><small id="who"></small><button id="out" class="hidden">Odhlásiť</button></div></header>
+<main>
+  <section id="login" class="card hidden" style="max-width:440px;margin:40px auto">
+    <h2 style="font-size:26px">Prihlásenie</h2>
+    <p class="meta">Prístup majú len e-maily nastavené v ADMIN_EMAILS. Účet sa zakladá v Supabase: Authentication, Users, Add user.</p>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <input id="em" type="email" placeholder="e-mail" autocomplete="username">
+      <input id="pw" type="password" placeholder="heslo" autocomplete="current-password">
+      <div class="row"><button class="main" id="bIn">Prihlásiť</button></div>
+      <div id="lmsg" class="msg"></div>
+    </div>
+  </section>
+
+  <section id="app" class="hidden">
+    <div class="row tabs" id="tabs">
+      <button data-f="todo" class="on">Na spracovanie</button>
+      <button data-f="odoslana">Odoslané</button>
+      <button data-f="all">Všetky</button>
+      <button id="reload" style="margin-left:auto">Obnoviť</button>
+    </div>
+    <div class="list" id="list"></div>
+  </section>
+
+  <section id="detail" class="hidden">
+    <div class="row"><button id="back">← Späť na zoznam</button><h2 id="dTitle" style="font-size:26px"></h2><span id="dBadge" class="badge"></span></div>
+    <div class="grid">
+      <div class="card"><h3>Objednávka</h3><dl id="dInfo" style="margin-top:10px"></dl></div>
+      <div class="card"><h3>Meno v príbehu</h3><div id="dKids" style="margin-top:10px"></div>
+        <p class="meta" style="margin:10px 0 0">Výrobu spustí Claude: <code id="dCmd"></code></p></div>
+      <div class="card">
+        <h3>Súbory</h3>
+        <div class="drop" id="drop" style="margin-top:10px">Pretiahnite sem ZIP z výroby alebo jednotlivé súbory<br><small>alebo</small> <label style="text-decoration:underline;cursor:pointer">vyberte<input type="file" id="pick" multiple accept=".pdf,.jpg,.jpeg,.zip" class="hidden"></label></div>
+        <div class="files" id="dFiles"></div>
+        <div id="upmsg" class="msg"></div>
+      </div>
+      <div class="card">
+        <h3>E-maily</h3>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-top:10px">
+          <button class="main" id="bE4">Odoslať hotovú rozprávku (E4)</button>
+          <details><summary style="cursor:pointer;font-weight:700">Otázka k menu (E2)</summary>
+            <textarea id="e2t" placeholder="Napríklad: Vyslovujete meno Chloe ako Kloé?" style="margin-top:8px"></textarea>
+            <button id="bE2" style="margin-top:8px">Poslať otázku</button></details>
+          <button id="bE1">Znova poslať potvrdenie (E1)</button>
+          <button id="bCancel">Označiť ako zrušenú</button>
+          <div id="emsg" class="msg"></div>
+        </div>
+      </div>
+      <div class="card"><h3>História</h3><div id="dLog" class="meta" style="margin-top:10px;font-size:14px"></div></div>
+    </div>
+  </section>
+</main>
+<script src="/assets/vendor/supabase.js"></script>
+<script src="/assets/vendor/jszip.min.js"></script>
+<script src="/assets/config.js"></script>
+<script>
+(function () {
+  var C = window.NR_CONFIG || {};
+  var sb = window.supabase.createClient(C.supabase, C.anon);
+  var $ = function (id) { return document.getElementById(id); };
+  var orders = [], filter = 'todo', cur = null;
+  var STAV = { zaplatena: 'zaplatená', vo_vyrobe: 'vo výrobe', odoslana: 'odoslaná', zrusena: 'zrušená', caka_na_platbu: 'čaká na platbu' };
+  var SUB = [
+    ['citanie', 'PDF na čítanie', /-citanie\.pdf$/i], ['tlac', 'PDF na tlač A4', /-tlac-A4\.pdf$/i],
+    ['omalovanky', 'Omaľovánky', /-omalovanky\.pdf$/i], ['pohladnica', 'Pohľadnica A6', /-pohladnica-A6\.pdf$/i],
+    ['obalka', 'Obálka do e-mailu', /(^|\/)obalka\.jpe?g$/i], ['obalka_maly', 'Náhľad obálky', /obalka-maly\.jpe?g$/i],
+    ['pohladnica_maly', 'Náhľad pohľadnice', /pohladnica-maly\.jpe?g$/i], ['omalovanky_maly', 'Náhľad omaľovánok', /omalovanky-maly\.jpe?g$/i],
+    ['audio', 'Nahrávky (ZIP)', /audio.*\.zip$|nahravky.*\.zip$/i]
+  ];
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function eur(c) { var v = c / 100; return (Number.isInteger(v) ? v : v.toFixed(2).replace('.', ',')) + ' €'; }
+  function when(t) { if (!t) return ''; var d = new Date(t); return d.getDate() + '. ' + (d.getMonth() + 1) + '. ' + d.getHours() + ':' + String(d.getMinutes()).padStart(2, '0'); }
+  function kids(o) { return (o.deti || []).map(function (d) { return d.meno; }).join(', ') || 'darček bez mena'; }
+  function sKym(t) { return (/^[szšž]/i.test(t) ? 'so ' : 's ') + t; }
+
+  function api(akcia, extra) {
+    return sb.auth.getSession().then(function (r) {
+      var tok = r.data.session && r.data.session.access_token;
+      return fetch(C.api + '/admin', { method: 'POST', headers: { 'content-type': 'application/json', Authorization: 'Bearer ' + tok, apikey: C.anon },
+        body: JSON.stringify(Object.assign({ akcia: akcia }, extra || {})) });
+    }).then(function (r) { return r.json().then(function (j) { if (!r.ok) throw new Error(j.chyba || 'Chyba'); return j; }); });
+  }
+
+  function show(id) { ['login', 'app', 'detail'].forEach(function (x) { $(x).classList.toggle('hidden', x !== id); }); }
+
+  function renderList() {
+    var xs = orders.filter(function (o) {
+      if (filter === 'todo') return o.status === 'zaplatena' || o.status === 'vo_vyrobe';
+      if (filter === 'odoslana') return o.status === 'odoslana';
+      return true;
+    });
+    $('list').innerHTML = xs.length ? xs.map(function (o) {
+      return '<button class="item" data-id="' + o.id + '"><span class="num">' + esc(o.cislo) + '</span>' +
+        '<span><b>' + esc(kids(o)) + '</b> <span class="meta">· ' + (o.verzia === 'audio' ? 'PDF + audio' : 'PDF') + (o.darcek ? ' · darček' : '') +
+        ' · ' + eur(o.suma_cents) + ' · ' + when(o.zaplatene_at || o.created_at) + (o.vcas ? ' · do 30. 11.' : ' · do 3 dní') + '</span></span>' +
+        '<span class="badge b-' + o.status + '">' + (STAV[o.status] || o.status) + '</span></button>';
+    }).join('') : '<p class="meta">Nič tu nie je.</p>';
+  }
+  function load() {
+    return api('zoznam').then(function (r) { orders = r.objednavky || []; renderList(); show('app'); location.hash = ''; })
+      .catch(function (e) { $('list').innerHTML = '<p class="err">' + esc(e.message) + '</p>'; show('app'); });
+  }
+
+  function renderFiles() {
+    var s = (cur && cur.subory) || {};
+    $('dFiles').innerHTML = SUB.filter(function (x) { return x[0] !== 'audio' || cur.verzia === 'audio'; }).map(function (x) {
+      return '<span class="' + (s[x[0]] ? 'ok' : 'miss') + '">' + (s[x[0]] ? '✓' : '·') + '</span><span>' + x[1] + '</span>';
+    }).join('');
+  }
+  function openDetail(id) {
+    api('detail', { id: id }).then(function (r) {
+      var o = cur = r.objednavka;
+      $('dTitle').textContent = o.cislo + ' · ' + kids(o);
+      $('dBadge').className = 'badge b-' + o.status; $('dBadge').textContent = STAV[o.status] || o.status;
+      var rows = [['Zákazník', o.meno_zakaznika], ['E-mail', '<a href="mailto:' + esc(o.email) + '">' + esc(o.email) + '</a>'], ['Verzia', o.verzia === 'audio' ? 'PDF + audio' : 'PDF'],
+        ['Suma', eur(o.suma_cents) + (o.kod ? ' (kód ' + esc(o.kod) + ')' : '')], ['Zaplatené', when(o.zaplatene_at)], ['Dodať', o.vcas ? 'najneskôr 30. 11.' : 'do 3 pracovných dní'],
+        ['Darček', o.darcek ? 'áno' : 'nie'], ['Venovanie', esc(o.venovanie || 'automatická veta')], ['Poznámka', esc(o.poznamka || '')], ['Odporučil', esc(o.odporucil || '')]];
+      $('dInfo').innerHTML = rows.map(function (x) { return '<dt>' + x[0] + '</dt><dd>' + (x[0] === 'E-mail' ? x[1] : (x[1] || '')) + '</dd>'; }).join('');
+      $('dKids').innerHTML = (o.deti || []).map(function (d) {
+        return '<p style="margin:0 0 8px"><b>' + esc(d.meno) + '</b> <span class="meta">· ' + (d.rod === 'f' ? 'dievčatko' : 'chlapček') + '</span><br>' +
+          '<span class="meta">bez ' + esc(d.tvary.g) + ' · ' + esc(d.tvary.d) + ' · na ' + esc(d.tvary.a) + ' · ' + esc(sKym(d.tvary.i)) + '</span></p>';
+      }).join('') || '<p class="meta">Meno doplnia obdarovaní.</p>';
+      var args = (o.deti || []).map(function (d) { return '"' + d.meno + ':' + d.rod + ':' + [d.tvary.g, d.tvary.d, d.tvary.a, d.tvary.i].join(',') + '"'; }).join(' ');
+      $('dCmd').textContent = 'objednavka.py ' + args + (o.venovanie ? ' --venovanie "' + o.venovanie + '"' : '');
+      $('dLog').innerHTML = (r.udalosti || []).map(function (u) { return when(u.created_at) + ' · ' + esc(u.druh); }).join('<br>');
+      $('upmsg').textContent = ''; $('emsg').textContent = ''; $('e2t').value = '';
+      renderFiles();
+      show('detail');
+      location.hash = o.cislo;
+    }).catch(function (e) { alert(e.message); });
+  }
+
+  function classify(name) {
+    for (var i = 0; i < SUB.length; i++) if (SUB[i][2].test(name)) return SUB[i][0];
+    return null;
+  }
+  function collect(fileList) {
+    var out = [];
+    var jobs = Array.prototype.map.call(fileList, function (f) {
+      if (/\.zip$/i.test(f.name) && !/audio|nahravky/i.test(f.name)) {
+        return JSZip.loadAsync(f).then(function (z) {
+          var ps = [];
+          z.forEach(function (path, entry) {
+            if (entry.dir) return;
+            var k = classify(path);
+            if (!k) return;
+            ps.push(entry.async('blob').then(function (b) {
+              var type = /\.pdf$/i.test(path) ? 'application/pdf' : /\.zip$/i.test(path) ? 'application/zip' : 'image/jpeg';
+              out.push({ kluc: k, file: new File([b], path.split('/').pop(), { type: type }) });
+            }));
+          });
+          return Promise.all(ps);
+        });
+      }
+      var k = classify(f.name);
+      if (k) out.push({ kluc: k, file: f });
+      return Promise.resolve();
+    });
+    return Promise.all(jobs).then(function () { return out; });
+  }
+  function upload(fileList) {
+    if (!cur) return;
+    $('upmsg').className = 'msg'; $('upmsg').textContent = 'Pripravujem súbory…';
+    collect(fileList).then(function (items) {
+      if (!items.length) throw new Error('Nenašiel som žiadny známy súbor. Názvy majú končiť napríklad na -citanie.pdf alebo obalka.jpg.');
+      return api('nahraj', { id: cur.id, subory: items.map(function (x) { return { kluc: x.kluc, nazov: x.file.name }; }) }).then(function (r) {
+        var map = {}, n = 0;
+        return r.nahraj.reduce(function (p, u) {
+          var it = items.find(function (x) { return x.kluc === u.kluc; });
+          return p.then(function () {
+            $('upmsg').textContent = 'Nahrávam ' + (++n) + ' z ' + r.nahraj.length + ': ' + it.file.name;
+            return sb.storage.from(u.bucket).uploadToSignedUrl(u.path, u.token, it.file, { contentType: it.file.type, upsert: true }).then(function (res) {
+              if (res.error) throw res.error;
+              map[u.kluc] = u.path;
+            });
+          });
+        }, Promise.resolve()).then(function () { return api('uloz', { id: cur.id, subory: map }); });
+      });
+    }).then(function (r) {
+      cur.subory = r.subory; cur.status = r.status;
+      $('upmsg').textContent = 'Hotovo, súbory sú nahraté.'; renderFiles();
+    }).catch(function (e) { $('upmsg').className = 'msg err'; $('upmsg').textContent = e.message || String(e); });
+  }
+
+  function act(btn, akcia, extra, ok, confirmText) {
+    if (confirmText && !confirm(confirmText)) return;
+    btn.disabled = true; $('emsg').className = 'msg'; $('emsg').textContent = 'Posielam…';
+    api(akcia, Object.assign({ id: cur.id }, extra || {})).then(function () { $('emsg').textContent = ok; openDetail(cur.id); })
+      .catch(function (e) { $('emsg').className = 'msg err'; $('emsg').textContent = e.message; })
+      .then(function () { btn.disabled = false; });
+  }
+
+  $('bIn').onclick = function () {
+    $('lmsg').textContent = '';
+    sb.auth.signInWithPassword({ email: $('em').value.trim(), password: $('pw').value }).then(function (r) {
+      if (r.error) { $('lmsg').className = 'msg err'; $('lmsg').textContent = 'Prihlásenie nevyšlo: ' + r.error.message; return; }
+      start();
+    });
+  };
+  $('pw').onkeydown = function (e) { if (e.key === 'Enter') $('bIn').click(); };
+  $('out').onclick = function () { sb.auth.signOut().then(function () { location.reload(); }); };
+  $('tabs').onclick = function (e) {
+    var b = e.target.closest('button[data-f]'); if (!b) return;
+    filter = b.getAttribute('data-f');
+    Array.prototype.forEach.call($('tabs').querySelectorAll('button[data-f]'), function (x) { x.classList.toggle('on', x === b); });
+    renderList();
+  };
+  $('reload').onclick = load;
+  $('list').onclick = function (e) { var b = e.target.closest('.item'); if (b) openDetail(b.getAttribute('data-id')); };
+  $('back').onclick = load;
+  $('pick').onchange = function (e) { upload(e.target.files); e.target.value = ''; };
+  var drop = $('drop');
+  drop.ondragover = function (e) { e.preventDefault(); drop.classList.add('over'); };
+  drop.ondragleave = function () { drop.classList.remove('over'); };
+  drop.ondrop = function (e) { e.preventDefault(); drop.classList.remove('over'); upload(e.dataTransfer.files); };
+  $('bE4').onclick = function () { act(this, 'e4', {}, 'E4 je odoslaný.', 'Odoslať zákazníkovi hotovú rozprávku (E4)? Skontrolovala si súbory?'); };
+  $('bE2').onclick = function () { act(this, 'e2', { otazka: $('e2t').value }, 'Otázka je odoslaná.', 'Poslať zákazníkovi túto otázku?'); };
+  $('bE1').onclick = function () { act(this, 'e1_znova', {}, 'E1 je odoslaný znova.', 'Znova poslať potvrdenie objednávky?'); };
+  $('bCancel').onclick = function () { act(this, 'stav', { status: 'zrusena' }, 'Objednávka je označená ako zrušená. Peniaze vráť v Stripe.', 'Označiť objednávku ako zrušenú?'); };
+
+  function start() {
+    sb.auth.getSession().then(function (r) {
+      var s = r.data.session;
+      if (!s) { show('login'); return; }
+      $('who').textContent = s.user.email; $('out').classList.remove('hidden');
+      load().then(function () {
+        var h = decodeURIComponent(location.hash.slice(1));
+        if (h) { var o = orders.find(function (x) { return x.cislo === h; }); if (o) openDetail(o.id); }
+      });
+    });
+  }
+  start();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /dakujeme/
+Disallow: /admin/
+Disallow: /stiahnut/
+Sitemap: https://www.naserozpravky.sk/sitemap.xml

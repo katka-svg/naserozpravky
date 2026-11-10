@@ -1,0 +1,720 @@
+<!doctype html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Objednávka rozprávky · Naše rozprávky</title>
+<meta name="description" content="Objednajte adventnú rozprávku s menom vášho dieťaťa.">
+<link rel="canonical" href="https://www.naserozpravky.sk/objednavka/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="sk_SK">
+<meta property="og:site_name" content="Naše rozprávky">
+<meta property="og:title" content="Objednávka rozprávky · Naše rozprávky">
+<meta property="og:description" content="Objednajte adventnú rozprávku s menom vášho dieťaťa.">
+<meta property="og:url" content="https://www.naserozpravky.sk/objednavka/">
+<meta property="og:image" content="https://www.naserozpravky.sk/assets/img/og-obalka.jpg">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/fonts.css">
+<style>#platba-stripe:empty,#platba-doplatok:empty{display:none}</style>
+<style>
+body{margin:0;background:#FBF8F1;}
+a{color:#2A2D3E}a:hover{color:#3D4A8F}
+input[type="text"],input[type="email"],select,textarea{width:100%;box-sizing:border-box;min-height:48px;padding:12px 14px;border:2px solid #C9CCD9;border-radius:14px;font:inherit;font-size:16px;color:#2A2D3E;background:#FFFFFF;}
+textarea{min-height:92px;resize:vertical;line-height:1.5;}
+input[type="checkbox"]{width:22px;height:22px;margin:2px 0 0;accent-color:#2A2D3E;flex:none;}
+input:focus,select:focus,textarea:focus{outline:3px solid #F4B740;outline-offset:1px;border-color:#2A2D3E;}
+@keyframes pop{0%{transform:scale(.7)}65%{transform:scale(1.08)}100%{transform:scale(1)}}
+@keyframes slidein{from{transform:translateY(10px)}to{transform:none}}
+[data-r=m-sum]{display:none}
+@media (max-width:900px){[data-r=m-sum]{display:flex}}
+button:disabled{opacity:.4;cursor:default}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app">
+<div style="background: #FBF8F1; color: #2A2D3E; font-family: 'DM Sans', 'Helvetica Neue', Arial, system-ui, sans-serif; font-size: 17px; line-height: 1.55; min-width: 0;">
+<svg aria-hidden="true" width="0" height="0" style="position: absolute; width: 0; height: 0; overflow: hidden;"><defs><filter id="pencil" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="3" result="warp"></feTurbulence><feDisplacementMap in="SourceGraphic" in2="warp" scale="2.6" xChannelSelector="R" yChannelSelector="G" result="rough"></feDisplacementMap><feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="1" seed="8" result="grain"></feTurbulence><feColorMatrix in="grain" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1.7 1.45" result="mask"></feColorMatrix><feComposite in="rough" in2="mask" operator="in"></feComposite></filter><pattern id="hatchOchre" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(38)"><path d="M0 0V5" stroke="#E8A33D" stroke-width="2.2"></path></pattern><pattern id="hatchPeach" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(30)"><path d="M0 0V4" stroke="#EE9A85" stroke-width="1.8"></path></pattern><pattern id="hatchMint" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(-35)"><path d="M0 0V5" stroke="#6FC0A0" stroke-width="2"></path></pattern></defs></svg>
+
+<header style="background: #FBF8F1; border-bottom: 1.6px solid #45454D;">
+<div style="max-width: 1180px; margin: 0 auto; padding: 16px clamp(16px, 4vw, 40px); display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
+<a href="/" style="display: flex; align-items: center; gap: 10px; text-decoration: none; font-family: 'Shantell Sans', 'Nunito', system-ui, sans-serif; font-weight: 700; font-variation-settings: 'INFM' 100, 'BNCE' 35; font-size: 21px;"><svg aria-hidden="true" width="34" height="34" viewBox="0 0 100 100"><g filter="url(#pencil)"><polygon points="50,10 62.9,32.2 88,37.6 70.9,56.8 73.5,82.4 50,72 26.5,82.4 29.1,56.8 12,37.6 37.1,32.2" fill="url(#hatchOchre)" stroke="#45454D" stroke-width="3.2" stroke-linejoin="round"></polygon><ellipse cx="42" cy="47" rx="3.6" ry="4.8" fill="#45454D"></ellipse><ellipse cx="58" cy="47" rx="3.6" ry="4.8" fill="#45454D"></ellipse><path d="M44 57 Q50 62 56 57" fill="none" stroke="#45454D" stroke-width="3" stroke-linecap="round"></path></g></svg>Naše rozprávky</a>
+<p style="margin: 0; display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 500;"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#45454D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>Bezpečná platba cez Stripe</p>
+</div>
+</header>
+
+<main style="max-width: 1180px; margin: 0 auto; padding: 40px clamp(16px, 4vw, 40px) 88px; display: flex; flex-wrap: wrap; align-items: flex-start; gap: 32px 40px;">
+<div style="flex: 999 1 600px; min-width: 0; display: flex; flex-direction: column; gap: 24px;">
+<div style="position: relative; display: flex; flex-direction: column; gap: 8px; padding-right: 96px;">
+<div aria-hidden="true" style="position: absolute; right: 0; top: -4px; width: 78px; height: 78px; transform-origin: 50% 100%; "><svg aria-hidden="true" viewBox="0 0 100 100" width="100%" height="100%" style="overflow: visible;"><g filter="url(#pencil)"><polygon points="50,10 62.9,32.2 88,37.6 70.9,56.8 73.5,82.4 50,72 26.5,82.4 29.1,56.8 12,37.6 37.1,32.2" fill="url(#hatchOchre)" stroke="#45454D" stroke-width="2.4" stroke-linejoin="round"></polygon><polygon points="51,8 64,33 90,38.5 71,58 74.5,84 50,73.5 25.5,83.5 28.5,57.5 10.5,38 36,31" fill="none" stroke="#45454D" stroke-width="1.3" stroke-linejoin="round" opacity="0.55"></polygon><circle cx="35" cy="57" r="4.5" fill="url(#hatchPeach)"></circle><circle cx="65" cy="57" r="4.5" fill="url(#hatchPeach)"></circle><path d="M44 56 Q50 62 56 56" fill="none" stroke="#45454D" stroke-width="2.4" stroke-linecap="round"></path></g><g style="transform-box: fill-box; transform-origin: center; "><ellipse cx="42" cy="47" rx="3" ry="4.2" fill="#45454D"></ellipse><ellipse cx="58" cy="47" rx="3" ry="4.2" fill="#45454D"></ellipse></g></svg></div>
+<p style="margin: 0; font-family: 'Shantell Sans', 'Nunito', system-ui, sans-serif; font-weight: 700; font-variation-settings: 'INFM' 100, 'BNCE' 35; font-size: 20px; color: #4A5070;">krok 1 z 3</p>
+<h1 style="margin: 0; font-family: 'Shantell Sans', 'Nunito', system-ui, sans-serif; font-weight: 700; font-variation-settings: 'INFM' 100, 'BNCE' 35; font-size: clamp(32px, 4vw, 48px); line-height: 1.08; letter-spacing: -0.01em;">Vyberte rozprávku</h1>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 14px;">
+<ol aria-label="Kroky objednávky" style="list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px;">
+
+<li><button type="button" data-dc-click="h1" aria-current="step" aria-label="Krok 1: Rozprávka, aktuálny" style="min-height: 44px; display: flex; align-items: center; gap: 8px; padding: 6px 14px 6px 6px; border: 1.6px solid #45454D; border-radius: 26px 10px 24px 12px / 12px 24px 10px 26px; background: #FFFFFF; color: #2A2D3E; font: inherit; font-weight: 700; font-size: 15px; cursor: pointer; opacity: 1;"><span style="width: 30px; height: 30px; border-radius: 26px 10px 24px 12px / 12px 24px 10px 26px; background: #F4B740; border: 1.6px solid #45454D; display: flex; align-items: center; justify-content: center; font-size: 14px;"><span>1</span></span>Rozprávka</button></li>
+
+<li><button type="button" data-dc-click="h2" disabled="" aria-current="false" aria-label="Krok 2: Pre koho, ešte nie" style="min-height: 44px; display: flex; align-items: center; gap: 8px; padding: 6px 14px 6px 6px; border: 1.6px solid #45454D; border-radius: 26px 10px 24px 12px / 12px 24px 10px 26px; background: #FFFFFF; color: #2A2D3E; font: inherit; font-weight: 700; font-size: 15px; cursor: pointer; opacity: 0.5;"><span style="width: 30px; height: 30px; border-radius: 26px 10px 24px 12px / 12px 24px 10px 26px; background: #FFFFFF; border: 1.6px solid #45454D; display: flex; align-items: center; justify-content: center; font-size: 14px;"><span>2</span></span>Pre koho</button></li>
+
+<li><button type="button" data-dc-click="h3" disabled="" aria-current="false" aria-label="Krok 3: Platba, ešte nie" style="min-height: 44px; display: flex; align-items: center; gap: 8px; padding: 6px 14px 6px 6px; border: 1.6px solid #45454D; border-radius: 26px 10px 24px 12px / 12px 24px 10px 26px; background: #FFFFFF; color: #2A2D3E; font: inherit; font-weight: 700; font-size: 15px; cursor: pointer; opacity: 0.5;"><span style="width: 30px; height: 30px; border-radius: 26px 10px 24px 12px / 12px 24px 10px 26px; background: #FFFFFF; border: 1.6px solid #45454D; display: flex; align-items: center; justify-content: center; font-size: 14px;"><span>3</span></span>Platba</button></li>
+
+</ol>
+<div aria-hidden="true" style="height: 10px; border-radius: 26px 10px 24px 12px / 12px 24px 10px 26px; background: #ECE6DA; overflow: hidden;"><div style="height: 100%; width: 0%; background: #2A2D3E; border-radius: 26px 10px 24px 12px / 12px 24px 10px 26px; transition: width 0.4s ease;"></div></div>
+</div>
+
+
+
+<section style="background: #FFFFFF; border: 1.8px solid #45454D; border-radius: 30px 12px 28px 14px / 14px 28px 12px 30px; box-shadow: none; padding: clamp(20px, 3vw, 32px); display: flex; flex-direction: column; gap: 28px; animation: slidein 0.35s ease both;">
+<div style="display: flex; flex-direction: column; gap: 14px;">
+<h2 style="margin: 0; font-family: 'Shantell Sans', 'Nunito', system-ui, sans-serif; font-weight: 700; font-variation-settings: 'INFM' 100, 'BNCE' 35; font-size: 22px;">Typ rozprávky</h2>
+<div role="group" aria-label="Typ rozprávky" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(190px, 100%), 1fr)); gap: 14px; padding-top: 6px;">
+
+<button type="button" data-dc-click="h4" aria-pressed="true" style="position: relative; text-align: left; cursor: pointer; background: #FDEFC8; border: 1.8px solid #45454D; border-radius: 24px 10px 22px 12px / 12px 22px 10px 24px; padding: 16px 18px; display: flex; flex-direction: column; gap: 4px; font: inherit; color: #2A2D3E; box-shadow: 0 0 0 4px rgba(232, 163, 61, 0.45); transition: box-shadow 0.2s ease, background-color 0.2s ease;">
+<span style="position: absolute; right: 12px; top: -15px; padding: 2px 10px; background: #CF3E2A; color: #FFFFFF; border: 1.6px solid #45454D; border-radius: 26px 10px 24px 12px / 12px 24px 10px 26px; font-size: 13px; font-weight: 700; transform: rotate(3deg);">Teraz</span>
+<span style="font-family: 'Shantell Sans', 'Nunito', system-ui, sans-serif; font-weight: 700; font-variation-settings: 'INFM' 100, 'BNCE' 35; font-size: 21px; line-height: 1.15;">Adventná</span>
+<span style="font-weight: 700; font-size: 15px;">24 častí na 24 večerov</span>
+<span style="font-size: 14px; color: #5A5F7A; line-height: 1.45;">Sen v krajine zvieratiek pre deti od 2 do 7 rokov. Po každej časti aktivita pre rodinu. Na 1. 12. objednajte do 24. 11.</span>
+<span style="margin-top: auto; padding-top: 6px; font-weight: 700; font-size: 15px;">13 € · s audiom 25 €</span>
+</button>
+
+
+
+<div aria-disabled="true" style="position: relative; box-sizing: border-box; background: #F4F1EA; border: 1.8px dashed #8C91A8; border-radius: 24px 10px 22px 12px / 12px 22px 10px 24px; padding: 16px 18px; display: flex; flex-direction: column; gap: 4px; color: #4A4E66;">
+<span style="position: absolute; right: 12px; top: -15px; padding: 2px 10px; background: #FFFFFF; color: #2A2D3E; border: 1.6px solid #45454D; border-radius: 26px 10px 24px 12px / 12px 24px 10px 26px; font-size: 13px; font-weight: 700; transform: rotate(-2deg);">Pripravujeme</span>
+<span style="font-family: 'Shantell Sans', 'Nunito', system-ui, sans-serif; font-weight: 700; font-variation-settings: 'INFM' 100, 'BNCE' 35; font-size: 21px; line-height: 1.15;">K príležitosti</span>
+<span style="font-weight: 700; font-size: 15px;">1 príbeh</span>
+<span style="font-size: 14px; line-height: 1.45;">Narodeniny, nový súrodenec, škôlka či návšteva lekára.</span>
+</div>
+
+
+<div aria-disabled="true" style="position: relative; box-sizing: border-box; background: #F4F1EA; border: 1.8px dashed #8C91A8; border-radius: 24px 10px 22px 12px / 12px 22px 10px 24px; padding: 16px 18px; display: flex; flex-direction: column; gap: 4px; color: #4A4E66;">
+<span style="position: absolute; right: 12px; top: -15px; padding: 2px 10px; background: #FFFFFF; color: #2A2D3E; border: 1.6px solid #45454D; border-radius: 26px 10px 24px 12px / 12px 24px 10px 26px; font-size: 13px; font-weight: 700; transform: rotate(-2deg);">Pripravujeme</span>
+<span style="font-family: 'Shantell Sans', 'Nunito', system-ui, sans-serif; font-weight: 700; font-variation-settings: 'INFM' 100, 'BNCE' 35; font-size: 21px; line-height: 1.15;">Na dobrú noc</span>
+<span style="font-weight: 700; font-size: 15px;">7 príbehov</span>
+<span style="font-size: 14px; line-height: 1.45;">Na každý večer v týždni jeden, pred spaním.</span>
+</div>
+
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 14px;">
+<h2 style="margin: 0; font-family: 'Shantell Sans', 'Nunito', system-ui, sans-serif; font-weight: 700; font-variation-settings: 'INFM' 100, 'BNCE' 35; font-size: 22px;">Verzia</h2>
+<div role="group" aria-label="Verzia" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr)); gap: 14px;">
+
+<button type="button" data-dc-click="h5" aria-pressed="false" style="text-align: left; cursor: pointer; background: #FFFFFF; border: 1.8px solid #45454D; border-radius: 24px 10px 22px 12px / 12px 22px 10px 24px; padding: 18px; display: flex; flex-direction: column; gap: 6px; font: inherit; color: #2A2D3E; box-shadow: none; transition: box-shadow 0.2s ease, background-color 0.2s ease;">
+<span style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px; width: 100%;"><span style="font-weight: 700; font-size: 18px;">PDF</span><span style="font-family: 'Shantell Sans', 'Nunito', system-ui, sans-serif; font-weight: 700; font-variation-settings: 'INFM' 100, 'BNCE' 35; font-size: 30px; line-height: 1;">13 €</span></span>
+<span style="font-size: 15px; color: #5A5F7A;">Príbeh s ilustráciami, aktivity, omaľovánky a vianočná pohľadnica.</span>
+</button>
+
+<button type="button" data-dc-click="h6" aria-pressed="true" style="text-align: left; cursor: pointer; background: #FDEFC8; border: 1.8px solid #45454D; border-radius: 24px 10px 22px 12px / 12px 22px 10px 24px; padding: 18px; display: flex; flex-direction: column; gap: 6px; font: inherit; color: #2A2D3E; box-shadow: 0 0 0 4px rgba(232, 163, 61, 0.45); transition: box-shadow 0.2s ease, background-color 0.2s ease;">
+<span style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px; width: 100%;"><span style="font-weight: 700; font-size: 18px;">PDF + audio</span><span style="font-family: 'Shantell Sans', 'Nunito', system-ui, sans-serif; font-weight: 700; font-variation-settings: 'INFM' 100, 'BNCE' 35; font-size: 30px; line-height: 1;">25 €</span></span>
+<span style="font-size: 15px; color: #5A5F7A;">Všetko z PDF a nahrávka ku každej časti, spolu viac ako hodina počúvania.</span>
+</button>
+
+</div>
+<p style="margin: 0; display: flex; align-items: center; gap: 12px; font-size: 15px; color: #3E4258; text-wrap: pretty;"><span aria-hidden="true" style="flex: none; width: 40px; height: 40px; box-sizing: border-box; border-radius: 26px 10px 24px 12px / 12px 24px 10px 26px; background: #BFE6D3; border: 1.6px solid #45454D; display: flex; align-items: center; justify-content: center; font-family: 'Shantell Sans', 'Nunito', system-ui, sans-serif; font-weight: 700; font-variation-settings: 'INFM' 100, 'BNCE' 35; font-size: 19px; color: #2A2D3E;">K</span><span>Číta Katka. Nahrávky vytvárame z jej hlasu pomocou AI a v každej časti zaznie meno vášho dieťaťa. Ukážku nájdete na úvodnej stránke.</span></p>
+</div>
+<label style="display: flex; gap: 12px; align-items: flex-start; padding: 16px; border-radius: 18px; background: #FBF8F1; cursor: pointer;"><input type="checkbox" data-dc-change="h7"><span style="display: flex; flex-direction: column;"><span style="font-weight: 700;">Je to darček</span><span style="font-size: 15px; color: #5A5F7A;">Dostanete poukaz v PDF. Ak meno dieťaťa nepoznáte, doplnia ho obdarovaní sami.</span></span></label>
+</section>
+
+
+
+
+
+
+<div style="display: flex; flex-direction: column; gap: 10px;">
+
+<div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+
+<button type="button" data-dc-click="h8" style="margin-left: auto; min-height: 56px; display: inline-flex; align-items: center; gap: 10px; padding: 14px 26px; border-radius: 26px 10px 24px 12px / 12px 24px 10px 26px; border: 1.8px solid #45454D; background: #CF3E2A; color: #FFFFFF; font: inherit; font-weight: 700; font-size: 18px; cursor: pointer; box-shadow: none;">Pokračovať<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M13 6l6 6-6 6"></path></svg></button>
+</div>
+</div>
+</div>
+
+<aside aria-label="Súhrn objednávky" style="flex: 1 1 320px; min-width: 0; box-sizing: border-box; background: #FFFFFF; border: 1.8px solid #45454D; border-radius: 30px 12px 28px 14px / 14px 28px 12px 30px; box-shadow: none; padding: clamp(20px, 3vw, 28px); display: flex; flex-direction: column; gap: 14px;">
+<p style="margin: 0; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;">Vaša objednávka</p>
+<div style="position: relative; margin: 6px 4px 4px; transform: rotate(-1.5deg);"><img src="/assets/img/obalka-web.jpg" alt="Obálka adventnej rozprávky s menom vášho dieťaťa" style="display: block; width: 100%; height: auto; box-sizing: border-box; border: 5px solid #FFFFFF; border-radius: 12px 5px 14px 7px / 7px 14px 5px 12px; box-shadow: 0 0 0 1.6px #45454D, 4px 6px 12px rgba(42, 45, 62, 0.14);"><div aria-hidden="true" style="position: absolute; inset: 5px; container-type: inline-size; pointer-events: none;"><div style="position: absolute; left: 4%; right: 4%; top: 7%; display: flex; flex-direction: column; align-items: center; text-align: center;"><p style="margin: 0; max-width: 100%; font-family: 'Fredoka', 'Nunito', system-ui, sans-serif; font-weight: 600; line-height: 1.05; color: #FFE89A; text-wrap: balance; text-shadow: 0.05em 0 0 #2B3A78, -0.05em 0 0 #2B3A78, 0 0.05em 0 #2B3A78, 0 -0.05em 0 #2B3A78, 0.036em 0.036em 0 #2B3A78, -0.036em 0.036em 0 #2B3A78, 0.036em -0.036em 0 #2B3A78, -0.036em -0.036em 0 #2B3A78, 0 0.09em 0.14em rgba(20, 30, 70, 0.45); font-size: 6.1cqw;"><span style="display: inline-block; width: 3em; border-bottom: 0.07em dashed #FFE89A; vertical-align: 0.1em;"></span> a tajomstvo Vianoc</p><p style="margin: 1.4cqw 0 0; font-family: 'Fredoka', 'Nunito', system-ui, sans-serif; font-weight: 600; font-size: 2.8cqw; line-height: 1.1; color: #FFFFFF; text-shadow: 0 0.06em 0.14em rgba(20, 30, 70, 0.55);">Adventná rozprávka na 24 večerov</p></div></div></div>
+<p style="margin: 0; font-family: 'Shantell Sans', 'Nunito', system-ui, sans-serif; font-weight: 700; font-variation-settings: 'INFM' 100, 'BNCE' 35; font-size: 24px; line-height: 1.15;">Adventná rozprávka na 24 večerov</p>
+
+<ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; font-size: 16px;">
+<li style="display: flex; justify-content: space-between; gap: 12px;"><span>PDF + audio</span><span style="font-weight: 700; white-space: nowrap;">25 €</span></li><li style="display: flex; justify-content: space-between; gap: 12px;"><span>Číta Katka</span><span style="font-weight: 700; white-space: nowrap;">v cene</span></li><li style="display: flex; justify-content: space-between; gap: 12px;"><span>Aktivita po každej časti</span><span style="font-weight: 700; white-space: nowrap;">v cene</span></li><li style="display: flex; justify-content: space-between; gap: 12px;"><span>Omaľovánky a pohľadnica</span><span style="font-weight: 700; white-space: nowrap;">v cene</span></li>
+</ul>
+<div style="border-top: 1.6px dashed #45454D; padding-top: 12px; display: flex; justify-content: space-between; align-items: baseline; gap: 12px;"><span style="font-weight: 700; font-size: 18px;">Spolu</span><span style="font-family: 'Shantell Sans', 'Nunito', system-ui, sans-serif; font-weight: 700; font-variation-settings: 'INFM' 100, 'BNCE' 35; font-size: 34px; line-height: 1;">25 €</span></div>
+<p style="margin: 0; font-size: 15px; color: #444A66;">Rozprávku pošleme najneskôr 30. 11., čítať môžete od 1. decembra.</p>
+<ul style="list-style: none; margin: 4px 0 0; padding: 14px 0 0; border-top: 1.5px solid #ECE6DA; display: flex; flex-direction: column; gap: 8px; font-size: 15px;">
+<li style="display: flex; gap: 10px; align-items: center;"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#45454D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"></path></svg>Príbeh sedí každej rodine</li>
+<li style="display: flex; gap: 10px; align-items: center;"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#45454D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"></path><path d="M13.5 6.5l4 4"></path></svg>Jedna oprava v cene</li>
+<li style="display: flex; gap: 10px; align-items: center;"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#45454D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>Stačí meno, fotky nepotrebujeme</li>
+</ul>
+</aside>
+</main>
+
+<footer style="background: #F1ECE2;">
+<div style="max-width: 1180px; margin: 0 auto; padding: 24px clamp(16px, 4vw, 40px); display: flex; flex-wrap: wrap; gap: 10px 28px; justify-content: space-between; font-size: 14px; color: #444A66;">
+<p style="margin: 0;">Naše rozprávky · Bc. Katarína Matečná - Ateliér Matečná · IČO 56814984 · <a href="mailto:info@ateliermatecna.sk">info@ateliermatecna.sk</a></p>
+<div style="display: flex; flex-wrap: wrap; gap: 8px 20px;"><a href="/obchodne-podmienky/">Obchodné podmienky</a><a href="/ochrana-osobnych-udajov/">Ochrana osobných údajov</a></div>
+</div>
+</footer>
+
+</div>
+</div>
+<template id="dc-tpl">
+<div style="background: #FBF8F1; color: #2A2D3E; font-family: 'DM Sans', 'Helvetica Neue', Arial, system-ui, sans-serif; font-size: 17px; line-height: 1.55; min-width: 0;">
+<svg aria-hidden="true" width="0" height="0" style="position: absolute; width: 0; height: 0; overflow: hidden;"><defs><filter id="pencil" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="3" result="warp"></feTurbulence><feDisplacementMap in="SourceGraphic" in2="warp" scale="2.6" xChannelSelector="R" yChannelSelector="G" result="rough"></feDisplacementMap><feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="1" seed="8" result="grain"></feTurbulence><feColorMatrix in="grain" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1.7 1.45" result="mask"></feColorMatrix><feComposite in="rough" in2="mask" operator="in"></feComposite></filter><pattern id="hatchOchre" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(38)"><path d="M0 0V5" stroke="#E8A33D" stroke-width="2.2"></path></pattern><pattern id="hatchPeach" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(30)"><path d="M0 0V4" stroke="#EE9A85" stroke-width="1.8"></path></pattern><pattern id="hatchMint" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(-35)"><path d="M0 0V5" stroke="#6FC0A0" stroke-width="2"></path></pattern></defs></svg>
+
+<header style="background: #FBF8F1; border-bottom: 1.6px solid #45454D;">
+<div style="max-width: 1180px; margin: 0 auto; padding: 16px clamp(16px, 4vw, 40px); display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
+<a href="/" style="display: flex; align-items: center; gap: 10px; text-decoration: none; font-family: {{headFont}}; font-weight: {{headWeight}}; font-variation-settings: {{headVar}}; font-size: 21px;"><svg aria-hidden="true" width="34" height="34" viewBox="0 0 100 100"><g filter="url(#pencil)"><polygon points="50,10 62.9,32.2 88,37.6 70.9,56.8 73.5,82.4 50,72 26.5,82.4 29.1,56.8 12,37.6 37.1,32.2" fill="url(#hatchOchre)" stroke="#45454D" stroke-width="3.2" stroke-linejoin="round"></polygon><ellipse cx="42" cy="47" rx="3.6" ry="4.8" fill="#45454D"></ellipse><ellipse cx="58" cy="47" rx="3.6" ry="4.8" fill="#45454D"></ellipse><path d="M44 57 Q50 62 56 57" fill="none" stroke="#45454D" stroke-width="3" stroke-linecap="round"></path></g></svg>Naše rozprávky</a>
+<p style="margin: 0; display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 500;"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#45454D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>Bezpečná platba cez Stripe</p>
+</div>
+</header>
+
+<main style="max-width: 1180px; margin: 0 auto; padding: 40px clamp(16px, 4vw, 40px) 88px; display: flex; flex-wrap: wrap; align-items: flex-start; gap: 32px 40px;">
+<div style="flex: 999 1 600px; min-width: 0; display: flex; flex-direction: column; gap: 24px;">
+<div style="position: relative; display: flex; flex-direction: column; gap: 8px; padding-right: 96px;">
+<div aria-hidden="true" style="position: absolute; right: 0; top: -4px; width: 78px; height: 78px; transform-origin: 50% 100%; "><svg aria-hidden="true" viewBox="0 0 100 100" width="100%" height="100%" style="overflow: visible;"><g filter="url(#pencil)"><polygon points="50,10 62.9,32.2 88,37.6 70.9,56.8 73.5,82.4 50,72 26.5,82.4 29.1,56.8 12,37.6 37.1,32.2" fill="url(#hatchOchre)" stroke="#45454D" stroke-width="2.4" stroke-linejoin="round"></polygon><polygon points="51,8 64,33 90,38.5 71,58 74.5,84 50,73.5 25.5,83.5 28.5,57.5 10.5,38 36,31" fill="none" stroke="#45454D" stroke-width="1.3" stroke-linejoin="round" opacity="0.55"></polygon><circle cx="35" cy="57" r="4.5" fill="url(#hatchPeach)"></circle><circle cx="65" cy="57" r="4.5" fill="url(#hatchPeach)"></circle><path d="M44 56 Q50 62 56 56" fill="none" stroke="#45454D" stroke-width="2.4" stroke-linecap="round"></path></g><g style="transform-box: fill-box; transform-origin: center; "><ellipse cx="42" cy="47" rx="3" ry="4.2" fill="#45454D"></ellipse><ellipse cx="58" cy="47" rx="3" ry="4.2" fill="#45454D"></ellipse></g></svg></div>
+<p style="margin: 0; font-family: {{headFont}}; font-weight: {{headWeight}}; font-variation-settings: {{headVar}}; font-size: 20px; color: #4A5070;">krok {{stepNum}} z 3</p>
+<h1 style="margin: 0; font-family: {{headFont}}; font-weight: {{headWeight}}; font-variation-settings: {{headVar}}; font-size: clamp(32px, 4vw, 48px); line-height: 1.08; letter-spacing: -0.01em;">{{stepTitle}}</h1>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 14px;">
+<ol aria-label="Kroky objednávky" style="list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px;">
+<sc-for list="{{steps}}" as="st" hint-placeholder-count="3">
+<li><button type="button" onClick="{{st.pick}}" disabled="{{st.locked}}" aria-current="{{st.ariaCurrent}}" aria-label="{{st.label}}" style="min-height: 44px; display: flex; align-items: center; gap: 8px; padding: 6px 14px 6px 6px; border: 1.6px solid #45454D; border-radius: 26px 10px 24px 12px / 12px 24px 10px 26px; background: #FFFFFF; color: #2A2D3E; font: inherit; font-weight: 700; font-size: 15px; cursor: pointer; opacity: {{st.opacity}};"><span style="width: 30px; height: 30px; border-radius: 26px 10px 24px 12px / 12px 24px 10px 26px; background: {{st.bg}}; border: 1.6px solid #45454D; display: flex; align-items: center; justify-content: center; font-size: 14px;"><sc-if value="{{st.done}}" hint-placeholder-val="{{false}}"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#45454D" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></sc-if><sc-if value="{{st.notDone}}" hint-placeholder-val="{{true}}"><span>{{st.n}}</span></sc-if></span>{{st.name}}</button></li>
+</sc-for>
+</ol>
+<div aria-hidden="true" style="height: 10px; border-radius: 26px 10px 24px 12px / 12px 24px 10px 26px; background: #ECE6DA; overflow: hidden;"><div style="height: 100%; width: {{progressPct}}%; background: #2A2D3E; border-radius: 26px 10px 24px 12px / 12px 24px 10px 26px; transition: width 0.4s ease;"></div></div>
+</div>
+
+
+<sc-if value="{{s1}}" hint-placeholder-val="{{true}}">
+<section style="background: #FFFFFF; border: 1.8px solid #45454D; border-radius: 30px 12px 28px 14px / 14px 28px 12px 30px; box-shadow: none; padding: clamp(20px, 3vw, 32px); display: flex; flex-direction: column; gap: 28px; animation: slidein 0.35s ease both;">
+<div style="display: flex; flex-direction: column; gap: 14px;">
+<h2 style="margin: 0; font-family: {{headFont}}; font-weight: {{headWeight}}; font-variation-settings: {{headVar}}; font-size: 22px;">Typ rozprávky</h2>
+<div role="group" aria-label="Typ rozprávky" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(190px, 100%), 1fr)); gap: 14px; padding-top: 6px;">
+<sc-for list="{{types}}" as="t" hint-placeholder-count="3">
+<sc-if value="{{t.ready}}" hint-placeholder-val="{{true}}"><button type="button" onClick="{{t.pick}}" aria-pressed="{{t.on}}" style="position: relative; text-align: left; cursor: pointer; background: {{t.bg}}; border: 1.8px solid #45454D; border-radius: 24px 10px 22px 12px / 12px 22px 10px 24px; padding: 16px 18px; display: flex; flex-direction: column; gap: 4px; font: inherit; color: #2A2D3E; box-shadow: {{t.shadow}}; transition: box-shadow 0.2s ease, background-color 0.2s ease;">
+<span style="position: absolute; right: 12px; top: -15px; padding: 2px 10px; background: {{accent}}; color: {{onAccent}}; border: 1.6px solid #45454D; border-radius: 26px 10px 24px 12px / 12px 24px 10px 26px; font-size: 13px; font-weight: 700; transform: rotate(3deg);">Teraz</span>
+<span style="font-family: {{headFont}}; font-weight: {{headWeight}}; font-variation-settings: {{headVar}}; font-size: 21px; line-height: 1.15;">{{t.name}}</span>
+<span style="font-weight: 700; font-size: 15px;">{{t.parts}}</span>
+<span style="font-size: 14px; color: #5A5F7A; line-height: 1.45;">{{t.note}}</span>
+<span style="margin-top: auto; padding-top: 6px; font-weight: 700; font-size: 15px;">{{t.price}}</span>
+</button></sc-if>
+<sc-if value="{{t.soon}}" hint-placeholder-val="{{false}}"><div aria-disabled="true" style="position: relative; box-sizing: border-box; background: #F4F1EA; border: 1.8px dashed #8C91A8; border-radius: 24px 10px 22px 12px / 12px 22px 10px 24px; padding: 16px 18px; display: flex; flex-direction: column; gap: 4px; color: #4A4E66;">
+<span style="position: absolute; right: 12px; top: -15px; padding: 2px 10px; background: #FFFFFF; color: #2A2D3E; border: 1.6px solid #45454D; border-radius: 26px 10px 24px 12px / 12px 24px 10px 26px; font-size: 13px; font-weight: 700; transform: rotate(-2deg);">Pripravujeme</span>
+<span style="font-family: {{headFont}}; font-weight: {{headWeight}}; font-variation-settings: {{headVar}}; font-size: 21px; line-height: 1.15;">{{t.name}}</span>
+<span style="font-weight: 700; font-size: 15px;">{{t.parts}}</span>
+<span style="font-size: 14px; line-height: 1.45;">{{t.note}}</span>
+</div></sc-if>
+</sc-for>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 14px;">
+<h2 style="margin: 0; font-family: {{headFont}}; font-weight: {{headWeight}}; font-variation-settings: {{headVar}}; font-size: 22px;">Verzia</h2>
+<div role="group" aria-label="Verzia" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr)); gap: 14px;">
+<sc-for list="{{versions}}" as="v" hint-placeholder-count="2">
+<button type="button" onClick="{{v.pick}}" aria-pressed="{{v.on}}" style="text-align: left; cursor: pointer; background: {{v.bg}}; border: 1.8px solid #45454D; border-radius: 24px 10px 22px 12px / 12px 22px 10px 24px; padding: 18px; display: flex; flex-direction: column; gap: 6px; font: inherit; color: #2A2D3E; box-shadow: {{v.shadow}}; transition: box-shadow 0.2s ease, background-color 0.2s ease;">
+<span style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px; width: 100%;"><span style="font-weight: 700; font-size: 18px;">{{v.name}}</span><span style="font-family: {{headFont}}; font-weight: {{headWeight}}; font-variation-settings: {{headVar}}; font-size: 30px; line-height: 1;">{{v.price}}</span></span>
+<span style="font-size: 15px; color: #5A5F7A;">{{v.desc}}</span>
+</button>
+</sc-for>
+</div>
+<sc-if value="{{isAudio}}" hint-placeholder-val="{{true}}"><p style="margin: 0; display: flex; align-items: center; gap: 12px; font-size: 15px; color: #3E4258; text-wrap: pretty;"><span aria-hidden="true" style="flex: none; width: 40px; height: 40px; box-sizing: border-box; border-radius: 26px 10px 24px 12px / 12px 24px 10px 26px; background: {{accent2}}; border: 1.6px solid #45454D; display: flex; align-items: center; justify-content: center; font-family: {{headFont}}; font-weight: {{headWeight}}; font-variation-settings: {{headVar}}; font-size: 19px; color: #2A2D3E;">K</span><span>Číta Katka. Nahrávky vytvárame z jej hlasu pomocou AI a v každej časti zaznie meno vášho dieťaťa. Ukážku nájdete na úvodnej stránke.</span></p></sc-if>
+</div>
+<label style="display: flex; gap: 12px; align-items: flex-start; padding: 16px; border-radius: 18px; background: #FBF8F1; cursor: pointer;"><input type="checkbox" checked="{{gift}}" onChange="{{toggleGift}}" /><span style="display: flex; flex-direction: column;"><span style="font-weight: 700;">Je to darček</span><span style="font-size: 15px; color: #5A5F7A;">Dostanete poukaz v PDF. Ak meno dieťaťa nepoznáte, doplnia ho obdarovaní sami.</span></span></label>
+</section>
+</sc-if>
+
+<sc-if value="{{s2}}" hint-placeholder-val="{{false}}">
+<section style="background: #FFFFFF; border: 1.8px solid #45454D; border-radius: 30px 12px 28px 14px / 14px 28px 12px 30px; box-shadow: none; padding: clamp(20px, 3vw, 32px); display: flex; flex-direction: column; gap: 22px; animation: slidein 0.35s ease both;">
+<p style="margin: 0; padding: 14px 16px; border-radius: 16px; background: #FDEFC8; font-size: 16px; text-wrap: pretty;"><strong>Vaše dieťa je hlavný hrdina.</strong> Každý večer zaspí a v krajine zvieratiek s nimi hľadá tajomstvo Vianoc. Stačí nám jeho meno, ostatné postavy sú zvieratká z príbehu.</p>
+<sc-for list="{{kids}}" as="k" hint-placeholder-count="1">
+<div style="border: 1.6px solid #45454D; border-radius: 24px 10px 22px 12px / 12px 22px 10px 24px; padding: clamp(16px, 2.5vw, 22px); display: flex; flex-direction: column; gap: 18px; background: #FBF8F1;">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 44px;">
+<h2 style="margin: 0; font-family: {{headFont}}; font-weight: {{headWeight}}; font-variation-settings: {{headVar}}; font-size: 20px;">{{k.title}}</h2>
+<sc-if value="{{k.removable}}" hint-placeholder-val="{{false}}"><button type="button" onClick="{{k.remove}}" aria-label="{{k.removeLabel}}" style="min-height: 44px; padding: 8px 14px; border-radius: 26px 10px 24px 12px / 12px 24px 10px 26px; border: 2px solid #C9CCD9; background: #FFFFFF; font: inherit; font-weight: 700; font-size: 14px; color: #444A66; cursor: pointer;">Odstrániť</button></sc-if>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px; max-width: 440px;">
+<label for="{{k.nameId}}" style="font-weight: 700; font-size: 17px;">{{k.nameLabel}}</label>
+<input id="{{k.nameId}}" type="text" maxlength="20" autocomplete="off" placeholder="{{k.placeholder}}" value="{{k.name}}" onInput="{{k.onName}}" onChange="{{k.onName}}" />
+<p style="margin: 0; font-size: 14px; color: #5A5F7A; text-wrap: pretty;">{{k.nameHelp}}</p>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px;">
+<p id="{{k.genderId}}" style="margin: 0; font-weight: 700; font-size: 17px;">Dievčatko alebo chlapček?</p>
+<div role="group" aria-labelledby="{{k.genderId}}" style="display: flex; flex-wrap: wrap; gap: 8px;">
+<sc-for list="{{k.genders}}" as="g" hint-placeholder-count="2"><button type="button" onClick="{{g.pick}}" aria-pressed="{{g.on}}" style="min-height: 44px; padding: 8px 18px; border: 1.6px solid #45454D; border-radius: 26px 10px 24px 12px / 12px 24px 10px 26px; background: {{g.bg}}; color: {{g.fg}}; font: inherit; font-weight: 700; font-size: 16px; cursor: pointer;">{{g.label}}</button></sc-for>
+</div>
+<p style="margin: 0; font-size: 14px; color: #5A5F7A;">Podľa toho upravíme slová v príbehu, napríklad našla alebo našiel.</p>
+</div>
+<sc-if value="{{k.showForms}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; flex-direction: column; gap: 12px; padding: 14px 16px; border-radius: 16px; background: #FFFFFF; border: 1.6px dashed #A3A8BD; animation: slidein 0.35s ease both;">
+<p style="margin: 0; font-weight: 700; font-size: 15px;">Takto bude meno znieť v príbehu</p>
+<ul style="list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(130px, 100%), 1fr)); gap: 10px 16px;">
+<sc-for list="{{k.preview}}" as="p" hint-placeholder-count="4"><li style="display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 13px; color: #5A5F7A;">{{p.q}}</span><span style="font-weight: 700; font-size: 17px;">{{p.phrase}}</span></li></sc-for>
+</ul>
+<sc-if value="{{k.formsClosed}}" hint-placeholder-val="{{true}}"><button type="button" onClick="{{k.openForms}}" style="align-self: flex-start; min-height: 44px; padding: 0; border: none; background: none; font: inherit; font-weight: 700; font-size: 15px; color: #2A2D3E; text-decoration: underline; cursor: pointer;">Niečo nesedí? Upraviť tvary</button></sc-if>
+<sc-if value="{{k.formsOpen}}" hint-placeholder-val="{{false}}">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(140px, 100%), 1fr)); gap: 12px;">
+<sc-for list="{{k.fields}}" as="x" hint-placeholder-count="4"><div style="display: flex; flex-direction: column; gap: 6px;"><label for="{{x.id}}" style="font-weight: 700; font-size: 14px;">{{x.label}}</label><input id="{{x.id}}" type="text" maxlength="24" autocomplete="off" spellcheck="false" value="{{x.val}}" onInput="{{x.onInput}}" onChange="{{x.onInput}}" /></div></sc-for>
+</div>
+<p style="margin: 0; font-size: 14px; color: #5A5F7A; text-wrap: pretty;">Napíšte len tvar mena, bez predložky. Predložky doplníme sami.</p>
+</sc-if>
+</div>
+</sc-if>
+</div>
+</sc-for>
+<sc-if value="{{canAddKid}}" hint-placeholder-val="{{true}}"><div style="display: flex; flex-direction: column; gap: 8px;"><button type="button" onClick="{{addKid}}" style="align-self: flex-start; min-height: 48px; padding: 12px 20px; border-radius: 26px 10px 24px 12px / 12px 24px 10px 26px; border: 1.8px solid #45454D; background: #FFFFFF; color: #2A2D3E; font: inherit; font-weight: 700; font-size: 16px; cursor: pointer;">{{addKidLabel}}</button><p style="margin: 0; font-size: 14px; color: #5A5F7A; text-wrap: pretty;">{{kidsLimit}}</p></div></sc-if>
+<div style="display: flex; flex-direction: column; gap: 6px;">
+<label for="poznamka" style="font-weight: 700; font-size: 15px;">Poznámka k menu <span style="font-weight: 400; color: #5A5F7A;">(nepovinné)</span></label>
+<p id="poznamka-pomocka" style="margin: 0; font-size: 14px; color: #5A5F7A; text-wrap: pretty;">Napríklad ako sa meno vyslovuje, ak sa číta inak, ako sa píše.</p>
+<input id="poznamka" type="text" maxlength="200" autocomplete="off" aria-describedby="poznamka-pomocka" placeholder="napr. Chloe čítajte Kloé" value="{{fv.poznamka}}" onInput="{{onField}}" onChange="{{onField}}" />
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px;">
+<label for="venovanie" style="font-weight: 700; font-size: 15px;">Venovanie na prvú stranu <span style="font-weight: 400; color: #5A5F7A;">(nepovinné)</span></label>
+<p id="venovanie-pomocka" style="margin: 0; font-size: 14px; color: #5A5F7A; text-wrap: pretty;">{{dedHelp}}</p>
+<input id="venovanie" type="text" maxlength="180" autocomplete="off" aria-describedby="venovanie-pomocka" placeholder="napr. S láskou od babky a deda" value="{{fv.venovanie}}" onInput="{{onField}}" onChange="{{onField}}" />
+</div>
+</section>
+</sc-if>
+
+<sc-if value="{{s3}}" hint-placeholder-val="{{false}}">
+<section style="background: #FFFFFF; border: 1.8px solid #45454D; border-radius: 30px 12px 28px 14px / 14px 28px 12px 30px; box-shadow: none; padding: clamp(20px, 3vw, 32px); display: flex; flex-direction: column; gap: 24px; animation: slidein 0.35s ease both;">
+<div data-r="m-sum" style="align-items: center; gap: 14px; padding: 12px; border-radius: 18px; background: #FBF8F1;"><div style="position: relative; flex: none; width: 118px;"><img src="/assets/img/obalka-web.jpg" alt="Obálka adventnej rozprávky s menom vášho dieťaťa" style="display: block; width: 100%; height: auto; box-sizing: border-box; border: 3px solid #FFFFFF; border-radius: 12px 5px 14px 7px / 7px 14px 5px 12px; box-shadow: 0 0 0 1.6px #45454D, 4px 6px 12px rgba(42, 45, 62, 0.14);" /><div aria-hidden="true" style="position: absolute; inset: 3px; container-type: inline-size; pointer-events: none;"><div style="position: absolute; left: 4%; right: 4%; top: 7%; display: flex; flex-direction: column; align-items: center; text-align: center;"><sc-if value="{{hasName}}" hint-placeholder-val="{{true}}"><p style="margin: 0; max-width: 100%; font-family: 'Fredoka', 'Nunito', system-ui, sans-serif; font-weight: 600; line-height: 1.05; color: #FFE89A; text-wrap: balance; text-shadow: 0.05em 0 0 #2B3A78, -0.05em 0 0 #2B3A78, 0 0.05em 0 #2B3A78, 0 -0.05em 0 #2B3A78, 0.036em 0.036em 0 #2B3A78, -0.036em 0.036em 0 #2B3A78, 0.036em -0.036em 0 #2B3A78, -0.036em -0.036em 0 #2B3A78, 0 0.09em 0.14em rgba(20, 30, 70, 0.45); font-size: {{coverSize}};">{{coverTitle}}</p></sc-if><sc-if value="{{noName}}" hint-placeholder-val="{{false}}"><p style="margin: 0; max-width: 100%; font-family: 'Fredoka', 'Nunito', system-ui, sans-serif; font-weight: 600; line-height: 1.05; color: #FFE89A; text-wrap: balance; text-shadow: 0.05em 0 0 #2B3A78, -0.05em 0 0 #2B3A78, 0 0.05em 0 #2B3A78, 0 -0.05em 0 #2B3A78, 0.036em 0.036em 0 #2B3A78, -0.036em 0.036em 0 #2B3A78, 0.036em -0.036em 0 #2B3A78, -0.036em -0.036em 0 #2B3A78, 0 0.09em 0.14em rgba(20, 30, 70, 0.45); font-size: 6.1cqw;"><span style="display: inline-block; width: 3em; border-bottom: 0.07em dashed #FFE89A; vertical-align: 0.1em;"></span> a tajomstvo Vianoc</p></sc-if><p style="margin: 1.4cqw 0 0; font-family: 'Fredoka', 'Nunito', system-ui, sans-serif; font-weight: 600; font-size: 2.8cqw; line-height: 1.1; color: #FFFFFF; text-shadow: 0 0.06em 0.14em rgba(20, 30, 70, 0.55);">Adventná rozprávka na 24 večerov</p></div></div></div><span style="display: flex; flex-direction: column; gap: 2px; min-width: 0;"><span style="font-family: {{headFont}}; font-weight: {{headWeight}}; font-variation-settings: {{headVar}}; font-size: 18px; line-height: 1.2;">{{summaryTitle}}</span><span style="font-size: 14px; color: #5A5F7A;">{{summarySub}}</span><span style="font-weight: 700;">Spolu {{totalText}}</span></span></div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr)); gap: 12px;">
+<div style="display: flex; flex-direction: column; gap: 6px;"><label for="meno" style="font-weight: 700; font-size: 15px;">Meno a priezvisko</label><input id="meno" type="text" autocomplete="name" value="{{fv.meno}}" onInput="{{onField}}" onChange="{{onField}}" /></div>
+<div style="display: flex; flex-direction: column; gap: 6px;"><label for="email" style="font-weight: 700; font-size: 15px;">E-mail, sem pošleme rozprávku</label><input id="email" type="email" autocomplete="email" value="{{fv.email}}" onInput="{{onField}}" onChange="{{onField}}" /></div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 2px; padding: 18px; border: 1.6px dashed #45454D; border-radius: 20px; background: #FDEFC8;"><span style="font-weight: 700; font-size: 17px;">Omaľovánky a pohľadnica sú v cene</span><span style="font-size: 15px; color: #444A66;">Každú ilustráciu z rozprávky dostanete aj ako obrázok na vyfarbenie. K tomu vianočná pohľadnica na vytlačenie.</span></div>
+<sc-if value="{{codeClosed}}" hint-placeholder-val="{{true}}"><button type="button" onClick="{{openCode}}" style="align-self: flex-start; min-height: 44px; padding: 0; border: none; background: none; font: inherit; font-weight: 700; font-size: 15px; color: #2A2D3E; text-decoration: underline; cursor: pointer;">Mám zľavový kód</button></sc-if><sc-if value="{{codeShown}}" hint-placeholder-val="{{false}}"><div style="display: flex; flex-direction: column; gap: 6px;"><label for="kod" style="font-weight: 700; font-size: 15px;">Zľavový kód</label><input id="kod" type="text" maxlength="20" autocomplete="off" placeholder="Sem zadajte kód" value="{{codeInput}}" onInput="{{onCodeInput}}" onChange="{{onCodeInput}}" style="text-transform: uppercase;" /><sc-if value="{{codeOk}}" hint-placeholder-val="{{false}}"><p style="margin: 0; font-size: 15px; font-weight: 700; color: #2F6B3A;">{{codeMsg}}</p></sc-if><sc-if value="{{codeBad}}" hint-placeholder-val="{{false}}"><p style="margin: 0; font-size: 15px; color: #B3321F;">{{codeMsg}}</p></sc-if></div></sc-if>
+<fieldset style="border: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px;">
+<legend style="font-family: {{headFont}}; font-weight: {{headWeight}}; font-variation-settings: {{headVar}}; font-size: 20px; padding: 0; margin-bottom: 10px;">Súhlasy</legend>
+<label style="display: flex; gap: 12px; align-items: flex-start; font-size: 15px; line-height: 1.5;"><input id="suhlasVop" type="checkbox" checked="{{fv.suhlasVop}}" onChange="{{onField}}" /><span>Súhlasím s <a href="/obchodne-podmienky/">obchodnými podmienkami</a>.</span></label>
+<label style="display: flex; gap: 12px; align-items: flex-start; font-size: 15px; line-height: 1.5;"><input id="suhlasOou" type="checkbox" checked="{{fv.suhlasOou}}" onChange="{{onField}}" /><span>Beriem na vedomie <a href="/ochrana-osobnych-udajov/">informácie o ochrane osobných údajov</a>.</span></label>
+<label style="display: flex; gap: 12px; align-items: flex-start; font-size: 15px; line-height: 1.5;"><input id="suhlasZacat" type="checkbox" checked="{{fv.suhlasZacat}}" onChange="{{onField}}" /><span>Žiadam, aby ste s tvorbou začali hneď a rozprávku mi poslali ešte pred uplynutím lehoty na odstúpenie. Beriem na vedomie, že jej odoslaním strácam právo odstúpiť od zmluvy.</span></label>
+</fieldset>
+<div style="display: flex; flex-direction: column; gap: 12px;">
+<p style="margin: 0; display: flex; align-items: center; gap: 8px; font-weight: 700;"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 10h18"></path></svg>Platba kartou cez Stripe</p>
+<p style="margin: 0; font-size: 15px; color: #5A5F7A;">Údaje karty zadáte v zabezpečenom formulári Stripe, ktorý sa ukáže po kliknutí na tlačidlo nižšie.</p>
+</div>
+<div style="border: 1.6px dashed #45454D; border-radius: 20px 10px 18px 12px / 12px 18px 10px 20px; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; background: #FBF8F1;"><p style="margin: 0; font-family: {{headFont}}; font-weight: {{headWeight}}; font-variation-settings: {{headVar}}; font-size: 20px;">Čo bude po zaplatení</p><ol style="margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 6px; font-size: 15px; line-height: 1.5;"><sc-for list="{{afterPay}}" as="a" hint-placeholder-count="3"><li>{{a.t}}</li></sc-for></ol></div>
+<sc-if value="{{hasPayErr}}"><p role="alert" style="margin: 0; color: #B3261E; font-weight: 700;">{{payErr}}</p></sc-if><sc-if value="{{payShow}}"><button type="button" onClick="{{pay}}" disabled="{{payBusy}}" style="display: flex; align-items: center; justify-content: center; min-height: 60px; box-sizing: border-box; padding: 14px 24px; border: 1.8px solid #45454D; border-radius: 26px 10px 24px 12px / 12px 24px 10px 26px; background: {{accent}}; color: {{onAccent}}; font-weight: 700; font-size: 19px; text-decoration: none; box-shadow: none; width: 100%; cursor: pointer; font-family: inherit;">{{payLabelNow}}</button></sc-if><div id="platba-stripe" data-dc-keep="1"></div>
+<p style="margin: 0; font-size: 14px; color: #5A5F7A; text-align: center;">Platbu spracúva Stripe, údaje o karte k nám neprídu. Potvrdenie o platbe vám príde e-mailom.</p>
+</section>
+</sc-if>
+
+<div style="display: flex; flex-direction: column; gap: 10px;">
+<sc-if value="{{showHint}}" hint-placeholder-val="{{false}}"><p role="status" style="margin: 0; align-self: flex-end; text-align: right; font-size: 15px; color: #444A66;">{{hint}}</p></sc-if>
+<div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+<sc-if value="{{canBack}}" hint-placeholder-val="{{false}}"><button type="button" onClick="{{back}}" style="min-height: 52px; padding: 12px 22px; border-radius: 26px 10px 24px 12px / 12px 24px 10px 26px; border: 1.8px solid #45454D; background: #FFFFFF; color: #2A2D3E; font: inherit; font-weight: 700; font-size: 17px; cursor: pointer;">Späť</button></sc-if>
+<sc-if value="{{canNext}}" hint-placeholder-val="{{true}}"><button type="button" onClick="{{next}}" disabled="{{nextDisabled}}" style="margin-left: auto; min-height: 56px; display: inline-flex; align-items: center; gap: 10px; padding: 14px 26px; border-radius: 26px 10px 24px 12px / 12px 24px 10px 26px; border: 1.8px solid #45454D; background: {{accent}}; color: {{onAccent}}; font: inherit; font-weight: 700; font-size: 18px; cursor: pointer; box-shadow: none;">{{nextLabel}}<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M13 6l6 6-6 6"></path></svg></button></sc-if>
+</div>
+</div>
+</div>
+
+<aside aria-label="Súhrn objednávky" style="flex: 1 1 320px; min-width: 0; box-sizing: border-box; background: #FFFFFF; border: 1.8px solid #45454D; border-radius: 30px 12px 28px 14px / 14px 28px 12px 30px; box-shadow: none; padding: clamp(20px, 3vw, 28px); display: flex; flex-direction: column; gap: 14px;">
+<p style="margin: 0; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;">Vaša objednávka</p>
+<div style="position: relative; margin: 6px 4px 4px; transform: rotate(-1.5deg);"><img src="/assets/img/obalka-web.jpg" alt="Obálka adventnej rozprávky s menom vášho dieťaťa" style="display: block; width: 100%; height: auto; box-sizing: border-box; border: 5px solid #FFFFFF; border-radius: 12px 5px 14px 7px / 7px 14px 5px 12px; box-shadow: 0 0 0 1.6px #45454D, 4px 6px 12px rgba(42, 45, 62, 0.14);" /><div aria-hidden="true" style="position: absolute; inset: 5px; container-type: inline-size; pointer-events: none;"><div style="position: absolute; left: 4%; right: 4%; top: 7%; display: flex; flex-direction: column; align-items: center; text-align: center;"><sc-if value="{{hasName}}" hint-placeholder-val="{{true}}"><p style="margin: 0; max-width: 100%; font-family: 'Fredoka', 'Nunito', system-ui, sans-serif; font-weight: 600; line-height: 1.05; color: #FFE89A; text-wrap: balance; text-shadow: 0.05em 0 0 #2B3A78, -0.05em 0 0 #2B3A78, 0 0.05em 0 #2B3A78, 0 -0.05em 0 #2B3A78, 0.036em 0.036em 0 #2B3A78, -0.036em 0.036em 0 #2B3A78, 0.036em -0.036em 0 #2B3A78, -0.036em -0.036em 0 #2B3A78, 0 0.09em 0.14em rgba(20, 30, 70, 0.45); font-size: {{coverSize}};">{{coverTitle}}</p></sc-if><sc-if value="{{noName}}" hint-placeholder-val="{{false}}"><p style="margin: 0; max-width: 100%; font-family: 'Fredoka', 'Nunito', system-ui, sans-serif; font-weight: 600; line-height: 1.05; color: #FFE89A; text-wrap: balance; text-shadow: 0.05em 0 0 #2B3A78, -0.05em 0 0 #2B3A78, 0 0.05em 0 #2B3A78, 0 -0.05em 0 #2B3A78, 0.036em 0.036em 0 #2B3A78, -0.036em 0.036em 0 #2B3A78, 0.036em -0.036em 0 #2B3A78, -0.036em -0.036em 0 #2B3A78, 0 0.09em 0.14em rgba(20, 30, 70, 0.45); font-size: 6.1cqw;"><span style="display: inline-block; width: 3em; border-bottom: 0.07em dashed #FFE89A; vertical-align: 0.1em;"></span> a tajomstvo Vianoc</p></sc-if><p style="margin: 1.4cqw 0 0; font-family: 'Fredoka', 'Nunito', system-ui, sans-serif; font-weight: 600; font-size: 2.8cqw; line-height: 1.1; color: #FFFFFF; text-shadow: 0 0.06em 0.14em rgba(20, 30, 70, 0.55);">Adventná rozprávka na 24 večerov</p></div></div></div>
+<p style="margin: 0; font-family: {{headFont}}; font-weight: {{headWeight}}; font-variation-settings: {{headVar}}; font-size: 24px; line-height: 1.15;">{{summaryTitle}}</p>
+<sc-if value="{{hasSub}}" hint-placeholder-val="{{true}}"><p style="margin: -8px 0 0; font-size: 15px; color: #5A5F7A;">{{summarySub}}</p></sc-if>
+<ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; font-size: 16px;">
+<sc-for list="{{lines}}" as="l" hint-placeholder-count="4"><li style="display: flex; justify-content: space-between; gap: 12px;"><span>{{l.label}}</span><span style="font-weight: 700; white-space: nowrap;">{{l.price}}</span></li></sc-for>
+</ul>
+<div style="border-top: 1.6px dashed #45454D; padding-top: 12px; display: flex; justify-content: space-between; align-items: baseline; gap: 12px;"><span style="font-weight: 700; font-size: 18px;">Spolu</span><span style="font-family: {{headFont}}; font-weight: {{headWeight}}; font-variation-settings: {{headVar}}; font-size: 34px; line-height: 1;">{{totalText}}</span></div>
+<p style="margin: 0; font-size: 15px; color: #444A66;">{{deliveryNote}}</p>
+<ul style="list-style: none; margin: 4px 0 0; padding: 14px 0 0; border-top: 1.5px solid #ECE6DA; display: flex; flex-direction: column; gap: 8px; font-size: 15px;">
+<li style="display: flex; gap: 10px; align-items: center;"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#45454D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"></path></svg>Príbeh sedí každej rodine</li>
+<li style="display: flex; gap: 10px; align-items: center;"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#45454D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"></path><path d="M13.5 6.5l4 4"></path></svg>Jedna oprava v cene</li>
+<li style="display: flex; gap: 10px; align-items: center;"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#45454D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>Stačí meno, fotky nepotrebujeme</li>
+</ul>
+</aside>
+</main>
+
+<footer style="background: #F1ECE2;">
+<div style="max-width: 1180px; margin: 0 auto; padding: 24px clamp(16px, 4vw, 40px); display: flex; flex-wrap: wrap; gap: 10px 28px; justify-content: space-between; font-size: 14px; color: #444A66;">
+<p style="margin: 0;">Naše rozprávky · Bc. Katarína Matečná - Ateliér Matečná · IČO 56814984 · <a href="mailto:info@ateliermatecna.sk">info@ateliermatecna.sk</a></p>
+<div style="display: flex; flex-wrap: wrap; gap: 8px 20px;"><a href="/obchodne-podmienky/">Obchodné podmienky</a><a href="/ochrana-osobnych-udajov/">Ochrana osobných údajov</a></div>
+</div>
+</footer>
+
+</div>
+</template>
+<script src="/assets/config.js"></script>
+<script src="/assets/morphdom.min.js"></script>
+<script src="/assets/dc-lite.js"></script>
+<script src="/assets/nr.js"></script>
+<script>
+window.__DCComponent = (function () {
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    // Koľko detí môže byť v príbehu a koľko stojí každé dieťa okrem hlavnej postavy.
+    this.maxKids = 2;
+    this.extraKid = 2;
+    const MAX_KIDS = this.maxKids;
+    let saved = {};
+    try { saved = JSON.parse(localStorage.getItem('rozpravka-vyber') || '{}') || {}; } catch (e) { saved = {}; }
+    const fromLanding = typeof saved.meno === 'string' ? saved.meno : '';
+    const parts = fromLanding.split(/\s+a\s+|\s*,\s*/).map((x) => x.trim()).filter((x) => x).slice(0, MAX_KIDS);
+    const kid = (id, name) => ({ id: id, name: String(name || '').slice(0, 20), gender: '', forms: null, formsFor: '', open: false });
+    const kids = parts.length ? parts.map((n, i) => kid(i + 1, n)) : [kid(1, '')];
+    this.state = {
+      step: null,
+      version: saved.verzia === 'pdf' || saved.verzia === 'audio' ? saved.verzia : 'audio',
+      gift: saved.darcek === true,
+      kids: kids,
+      nextKid: kids.length + 1,
+      code: '',
+      codeOpen: false,
+      f: {}
+    };
+  }
+
+  componentDidMount() {
+    try {
+      const saved = JSON.parse(localStorage.getItem('rozpravka-vyber') || '{}') || {};
+      delete saved.verzia; delete saved.hlas; delete saved.darcek;
+      localStorage.setItem('rozpravka-vyber', JSON.stringify(saved));
+    } catch (e) {}
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.krok !== this.props.krok && this.state.step !== null) {
+      this.setState({ step: null });
+    }
+    try {
+      const deti = this.state.kids.map((k) => {
+        const nm = this.clean(k.name);
+        const t = this.formsOf(k);
+        return { meno: nm, rod: k.gender, tvary: t ? t.used : null };
+      });
+      const mena = deti.map((d) => d.meno).filter((x) => x);
+      localStorage.setItem('rozpravka-objednavka', JSON.stringify({ meno: mena.join(' a '), mena: mena, deti: deti, typ: 'advent', verzia: this.state.version, darcek: this.state.gift, poznamka: String(this.state.f.poznamka || ''), venovanie: String(this.state.f.venovanie || '') }));
+    } catch (e) {}
+  }
+
+  setKid(id, patch) {
+    this.setState({ kids: this.state.kids.map((x) => (x.id === id ? Object.assign({}, x, patch) : x)) });
+  }
+
+  clean(raw) {
+    const small = ['a', 'aj', 'i'];
+    return String(raw || '').replace(/\s+/g, ' ').trim().split(' ').filter((w) => w)
+      .map((w) => (small.includes(w.toLowerCase()) ? w.toLowerCase() : w.charAt(0).toUpperCase() + w.slice(1))).join(' ');
+  }
+
+  // Skloňovanie krstného mena: 2. pád (bez koho), 3. pád (komu), 4. pád (na koho), 7. pád (s kým).
+  slovo(w, rod) {
+    const low = w.toLowerCase();
+    const end = low.slice(-1);
+    const prev = low.slice(-2, -1);
+    const stem = w.slice(0, -1);
+    const same = { g: w, d: w, a: w, i: w };
+    if (w.length < 2) return same;
+    const soft = (c) => 'cčďjľňšžť'.indexOf(c) >= 0;
+    const hard = (x) => x.replace(/ď$/, 'd').replace(/ť$/, 't').replace(/ň$/, 'n').replace(/ľ$/, 'l');
+    if (rod === 'f') {
+      if (end !== 'a') return same;
+      if (prev === 'e') return { g: stem + 'y', d: stem + 'i', a: stem + 'u', i: stem + 'ou' };
+      if (prev === 'i' || prev === 'y') return { g: stem + 'e', d: stem + 'i', a: stem + 'u', i: stem + 'ou' };
+      if (soft(prev)) return { g: hard(stem) + 'e', d: hard(stem) + 'i', a: stem + 'u', i: stem + 'ou' };
+      return { g: stem + 'y', d: stem + 'e', a: stem + 'u', i: stem + 'ou' };
+    }
+    if (end === 'o') return { g: stem + 'a', d: stem + 'ovi', a: stem + 'a', i: stem + 'om' };
+    if (end === 'a') return { g: stem + 'u', d: stem + 'ovi', a: stem + 'u', i: stem + 'om' };
+    if ('eéiíyý'.indexOf(end) >= 0) return { g: w + 'ho', d: w + 'mu', a: w + 'ho', i: w + 'm' };
+    if ('áóúuôä'.indexOf(end) >= 0) return same;
+    const drops = { peter: 'Petr', alexander: 'Alexandr', pavol: 'Pavl' };
+    const base = drops[low] || w;
+    return { g: base + 'a', d: base + 'ovi', a: base + 'a', i: base + 'om' };
+  }
+
+  tvary(name, rod) {
+    const out = { g: [], d: [], a: [], i: [] };
+    name.split(' ').filter((x) => x).forEach((w) => {
+      const t = this.slovo(w, rod);
+      out.g.push(t.g); out.d.push(t.d); out.a.push(t.a); out.i.push(t.i);
+    });
+    return { g: out.g.join(' '), d: out.d.join(' '), a: out.a.join(' '), i: out.i.join(' ') };
+  }
+
+  formsOf(k) {
+    const nm = this.clean(k.name);
+    if (!nm || !k.gender) return null;
+    const key = nm + '|' + k.gender;
+    const auto = this.tvary(nm, k.gender);
+    const own = k.forms && k.formsFor === key ? k.forms : {};
+    const shown = {};
+    const used = { n: nm };
+    ['g', 'd', 'a', 'i'].forEach((x) => {
+      shown[x] = own[x] !== undefined ? own[x] : auto[x];
+      used[x] = own[x] && String(own[x]).trim() ? String(own[x]).trim() : auto[x];
+    });
+    return { key: key, shown: shown, used: used, own: own };
+  }
+
+  sKym(form) {
+    const c = String(form || '').charAt(0).toLowerCase();
+    return ('szšž'.indexOf(c) >= 0 ? 'so ' : 's ') + form;
+  }
+
+  renderVals() {
+    const s = this.state;
+    const MAX_KIDS = this.maxKids;
+    const EXTRA_KID = this.extraKid;
+    const accent = this.props.accent ?? '#CF3E2A';
+    const hx = String(accent).replace('#', '');
+    let hr = parseInt(hx.slice(0, 2), 16);
+    let hg = parseInt(hx.slice(2, 4), 16);
+    let hb = parseInt(hx.slice(4, 6), 16);
+    if ([hr, hg, hb].some((v) => isNaN(v))) { hr = 207; hg = 62; hb = 42; }
+    const lin = (c) => { const x = c / 255; return x <= 0.03928 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4); };
+    const onAccent = (0.2126 * lin(hr) + 0.7152 * lin(hg) + 0.0722 * lin(hb)) > 0.23 ? '#2A2D3E' : '#FFFFFF';
+    const hatch = 'repeating-linear-gradient(38deg, rgba(244, 183, 64, 0.7) 0 3px, rgba(244, 183, 64, 0.12) 3px 6px)';
+    const accent2 = this.props.accent2 ?? '#BFE6D3';
+    const font = this.props.pismoNadpisov ?? 'Shantell Sans';
+    let headFont = "'Shantell Sans', 'Nunito', system-ui, sans-serif";
+    let headWeight = 700;
+    let headVar = "'INFM' 100, 'BNCE' 35";
+    if (font === 'Nunito') { headFont = "'Nunito', system-ui, sans-serif"; headWeight = 900; headVar = 'normal'; }
+    if (font === 'Fredoka') { headFont = "'Fredoka', 'Nunito', system-ui, sans-serif"; headWeight = 600; headVar = 'normal'; }
+
+    const rawStep = s.step !== null ? s.step : parseInt(this.props.krok ?? '1', 10);
+    const step = Math.min(3, Math.max(1, rawStep || 1));
+    const go = (n) => this.setState({ step: n });
+
+    const stepNames = ['Rozprávka', 'Pre koho', 'Platba'];
+    const titles = ['Vyberte rozprávku', 'Pre koho je rozprávka', 'Kontakt a platba'];
+    const steps = stepNames.map((name, i) => {
+      const n = i + 1;
+      const done = n < step;
+      const current = n === step;
+      return {
+        n: n,
+        name: name,
+        done: done,
+        notDone: !done,
+        locked: n > step,
+        ariaCurrent: current ? 'step' : 'false',
+        bg: current ? '#F4B740' : (done ? accent2 : '#FFFFFF'),
+        opacity: n > step ? '0.5' : '1',
+        label: 'Krok ' + n + ': ' + name + (done ? ', hotový' : (current ? ', aktuálny' : ', ešte nie')),
+        pick: () => { if (n <= step) go(n); }
+      };
+    });
+
+    const card = (on) => on ? { bg: '#FDEFC8', shadow: '0 0 0 4px rgba(232, 163, 61, 0.45)' } : { bg: '#FFFFFF', shadow: 'none' };
+    const chip = (on) => on ? { bg: hatch, fg: '#2A2D3E' } : { bg: '#FFFFFF', fg: '#2A2D3E' };
+
+    const types = [
+      { id: 'advent', ready: true, name: 'Adventná', parts: '24 častí na 24 večerov', note: 'Sen v krajine zvieratiek pre deti od 2 do 7 rokov. Po každej časti aktivita pre rodinu. Na 1. 12. objednajte do 24. 11.', price: '13 € · s audiom 25 €' },
+      { id: 'prilezitost', ready: false, name: 'K príležitosti', parts: '1 príbeh', note: 'Narodeniny, nový súrodenec, škôlka či návšteva lekára.', price: '' },
+      { id: 'tyzden', ready: false, name: 'Na dobrú noc', parts: '7 príbehov', note: 'Na každý večer v týždni jeden, pred spaním.', price: '' }
+    ].map((t) => {
+      const c = card(t.ready);
+      return Object.assign({}, t, { soon: !t.ready, on: t.ready, bg: c.bg, shadow: c.shadow, pick: () => {} });
+    });
+
+    const PRICES = { pdf: 13, audio: 25 };
+    const versions = [
+      { id: 'pdf', name: 'PDF', price: PRICES.pdf + ' €', desc: 'Príbeh s ilustráciami, aktivity, omaľovánky a vianočná pohľadnica.' },
+      { id: 'audio', name: 'PDF + audio', price: PRICES.audio + ' €', desc: 'Všetko z PDF a nahrávka ku každej časti, spolu viac ako hodina počúvania.' }
+    ].map((v) => {
+      const c = card(s.version === v.id);
+      return Object.assign({}, v, { on: s.version === v.id, bg: c.bg, shadow: c.shadow, pick: () => this.setState({ version: v.id }) });
+    });
+    const isAudio = s.version === 'audio';
+
+    const two = s.kids.length > 1;
+    const ORD = ['Prvé', 'Druhé', 'Tretie', 'Štvrté', 'Piate'];
+    const fieldDefs = [
+      { key: 'g', label: 'bez koho?' },
+      { key: 'd', label: 'komu?' },
+      { key: 'a', label: 'na koho?' },
+      { key: 'i', label: 's kým?' }
+    ];
+    const kids = s.kids.map((k, idx) => {
+      const fo = this.formsOf(k);
+      return {
+        title: two ? (ORD[idx] || (idx + 1) + '.') + ' dieťa' : 'Vaše dieťa',
+        removable: idx > 0,
+        removeLabel: 'Odstrániť ' + (ORD[idx] || '').toLowerCase() + ' dieťa',
+        remove: () => this.setState({ kids: this.state.kids.filter((x) => x.id !== k.id) }),
+        nameId: 'dieta-meno-' + k.id,
+        nameLabel: idx === 0 ? 'Ako sa volá vaše dieťa?' : 'Ako sa volá súrodenec?',
+        placeholder: idx === 0 ? 'napr. Ema' : 'napr. Tomáš',
+        name: k.name,
+        onName: (e) => { const v = e && e.target ? String(e.target.value || '').slice(0, 20) : ''; if (v !== k.name) this.setKid(k.id, { name: v }); },
+        nameHelp: idx === 0
+          ? (s.gift ? 'Kupujete darček? Ak meno nepoznáte, nechajte ho prázdne, obdarovaní ho doplnia.' : 'Napíšte ho tak, ako ho doma voláte, napríklad Kubo alebo Sárka.')
+          : 'Každé ďalšie dieťa stojí ' + EXTRA_KID + ' €. Ak meno ešte nepoznáte, pri darčeku ho doplnia obdarovaní.',
+        genderId: 'dieta-rod-' + k.id,
+        genders: [{ id: 'f', label: 'Dievčatko' }, { id: 'm', label: 'Chlapček' }].map((g) => {
+          const on = k.gender === g.id;
+          const c = chip(on);
+          return { label: g.label, on: on, bg: c.bg, fg: c.fg, pick: () => this.setKid(k.id, { gender: g.id }) };
+        }),
+        showForms: !!fo,
+        preview: fo ? [
+          { q: 'bez koho?', phrase: 'bez ' + fo.used.g },
+          { q: 'komu?', phrase: fo.used.d },
+          { q: 'na koho?', phrase: 'na ' + fo.used.a },
+          { q: 's kým?', phrase: this.sKym(fo.used.i) }
+        ] : [],
+        formsOpen: !!k.open,
+        formsClosed: !k.open,
+        openForms: () => this.setKid(k.id, { open: true }),
+        fields: fo ? fieldDefs.map((fd) => ({
+          id: 'tvar-' + fd.key + '-' + k.id,
+          label: fd.label,
+          val: fo.shown[fd.key],
+          onInput: (e) => {
+            const v = e && e.target ? String(e.target.value || '').slice(0, 24) : '';
+            const cur = this.state.kids.find((x) => x.id === k.id) || k;
+            const now = this.formsOf(cur);
+            if (!now) return;
+            if (now.shown[fd.key] === v) return;
+            this.setKid(k.id, { forms: Object.assign({}, now.own, { [fd.key]: v }), formsFor: now.key });
+          }
+        })) : []
+      };
+    });
+
+    const kidProblem = (k, idx) => {
+      const nm = this.clean(k.name);
+      if (!nm) {
+        if (s.gift) return '';
+        return idx === 0 ? 'Doplňte meno dieťaťa.' : 'Doplňte meno súrodenca alebo ho odstráňte.';
+      }
+      if (!k.gender) return two ? 'Pri ' + (['prvom', 'druhom', 'treťom', 'štvrtom', 'piatom'][idx] || '') + ' dieťati vyberte dievčatko alebo chlapček.' : 'Vyberte, či je to dievčatko alebo chlapček.';
+      return '';
+    };
+    const problems = s.kids.map((k, idx) => kidProblem(k, idx)).filter((x) => x);
+    const step2Ok = problems.length === 0;
+
+    const names = s.kids.map((k) => this.clean(k.name)).filter((x) => x);
+    const hasName = names.length > 0;
+    const coverTitle = names.join(', ') + ' a tajomstvo Vianoc';
+    const listNames = (xs) => xs.length < 2 ? xs.join('') : xs.slice(0, -1).join(', ') + ' a ' + xs[xs.length - 1];
+    const coverSize = coverTitle.length > 30 ? '4.4cqw' : (coverTitle.length > 24 ? '5.2cqw' : '6.1cqw');
+
+    const base = isAudio ? PRICES.audio : PRICES.pdf;
+    const extraKids = Math.max(0, s.kids.length - 1);
+    const extra = extraKids * EXTRA_KID;
+    const total = base + extra;
+    const CODES = Object.assign({ SKOLKAR: 5 }, (window.NR && window.NR.codes) || {});
+    const isRef = !!(window.NR && window.NR.refs && window.NR.refs[String(s.code || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, '').toUpperCase()]);
+    const codeKey = String(s.code || '').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\s+/g, '').toUpperCase();
+    const codeAmount = CODES[codeKey] || 0;
+    const discount = codeAmount ? Math.min(codeAmount, total) : 0;
+    const toPay = total - discount;
+
+    const lines = [{ label: isAudio ? 'PDF + audio' : 'PDF', price: base + ' €' }];
+    if (isAudio) lines.push({ label: 'Číta Katka', price: 'v cene' });
+    if (extraKids === 1) lines.push({ label: names.length > 1 ? 'Druhé dieťa: ' + names[1] : 'Druhé dieťa', price: extra + ' €' });
+    if (extraKids > 1) lines.push({ label: 'Ďalšie deti: ' + extraKids + ' × ' + EXTRA_KID + ' €', price: extra + ' €' });
+    lines.push({ label: 'Aktivita po každej časti', price: 'v cene' });
+    lines.push({ label: 'Omaľovánky a pohľadnica', price: 'v cene' });
+    if (discount) lines.push({ label: 'Zľava, kód ' + codeKey, price: '-' + discount + ' €' });
+
+    // Objednávky do 24. 11. stihnú prvé adventné čítanie, neskoršie pošleme do 3 pracovných dní (predávame až do Vianoc).
+    const today = new Date();
+    const byDate = today.getMonth() < 10 || (today.getMonth() === 10 && today.getDate() <= 24);
+    const termin = this.props.termin ?? 'podľa dnešného dátumu';
+    const onTime = termin === 'objednávka do 24. 11.' ? true : (termin === 'objednávka po 24. 11.' ? false : byDate);
+    const deliveryNote = s.gift
+      ? 'Hneď po platbe dostanete darčekový poukaz v PDF. Ak meno nevyplníte, obdarovaní ho doplnia cez odkaz.'
+      : (onTime ? 'Rozprávku pošleme najneskôr 30. 11., čítať môžete od 1. decembra.' : 'Rozprávku pošleme do 3 pracovných dní. Zmeškané večery si prečítate naraz.');
+    const afterPay = s.gift ? [
+      { t: 'Hneď po platbe dostanete darčekový poukaz v PDF.' },
+      { t: 'Ak ste meno nevyplnili, obdarovaní ho doplnia cez odkaz v poukaze.' },
+      { t: 'Ak meno dostaneme do 24. 11., rozprávku pošleme najneskôr 30. 11. Neskôr ju pošleme do 3 pracovných dní od doplnenia mena.' }
+    ] : [
+      { t: 'Hneď vám príde potvrdenie na e-mail.' },
+      { t: 'Meno vložíme do príbehu a skontrolujeme, či všade sedí. Ak si nebudeme istí, ozveme sa vám.' },
+      { t: onTime ? 'Rozprávku pošleme najneskôr 30. 11., aby ste mohli čítať od 1. decembra.' : 'Rozprávku pošleme do 3 pracovných dní. Zmeškané večery si prečítate naraz a potom už každý večer jednu časť.' }
+    ];
+
+    // Venovanie: keď ho zákazník nenapíše, do PDF ide veta podľa mena a rodu.
+    const dk = s.kids.map((k) => ({ t: this.formsOf(k), g: k.gender })).filter((x) => x.t);
+    let dedDefault = '';
+    if (dk.length && dk.length === s.kids.length) {
+      const acc = dk.map((x) => x.t.used.a);
+      const who = acc.length === 1 ? acc[0] : acc.slice(0, -1).join(', ') + ' a ' + acc[acc.length - 1];
+      const verb = dk.length === 1 ? (dk[0].g === 'f' ? 'ktorá vie' : 'ktorý vie') : (dk.every((x) => x.g === 'f') ? 'ktoré vedia' : 'ktorí vedia');
+      dedDefault = 'Pre ' + who + ', ' + verb + ', kde hľadať tajomstvo Vianoc.';
+    }
+    const dedHelp = 'Pár slov pod menom na prvej strane rozprávky. ' + (dedDefault ? 'Ak nič nenapíšete, bude tam: „' + dedDefault + '“' : 'Ak nič nenapíšete, doplníme krátku vetu s menom dieťaťa.');
+
+    const summaryTitle = !hasName ? 'Adventná rozprávka na 24 večerov' : (names.length === 1 ? 'Rozprávka, v ktorej je ' + names[0] : 'Rozprávka, v ktorej sú ' + listNames(names));
+    const nextDisabled = step === 2 && !step2Ok;
+
+    return {
+      accent: accent,
+      onAccent: onAccent,
+      accent2: accent2,
+      headFont: headFont,
+      headWeight: headWeight,
+      headVar: headVar,
+      stepNum: step,
+      stepTitle: titles[step - 1],
+      steps: steps,
+      progressPct: Math.round(((step - 1) / 2) * 100),
+      s1: step === 1,
+      s2: step === 2,
+      s3: step === 3,
+      canBack: step > 1,
+      canNext: step < 3,
+      back: () => go(Math.max(1, step - 1)),
+      next: () => { if (step === 2 && !step2Ok) return; go(Math.min(3, step + 1)); },
+      nextDisabled: nextDisabled,
+      showHint: nextDisabled,
+      hint: problems[0] || '',
+      nextLabel: step === 2 ? 'Pokračovať k platbe' : 'Pokračovať',
+      types: types,
+      versions: versions,
+      isAudio: isAudio,
+      gift: s.gift,
+      toggleGift: () => this.setState({ gift: !this.state.gift }),
+      kids: kids,
+      canAddKid: s.kids.length < MAX_KIDS,
+      addKidLabel: '+ Pridať súrodenca za ' + EXTRA_KID + ' €',
+      kidsLimit: MAX_KIDS === 2 ? 'Súrodenci budú snívať spolu. V rozprávke môžu byť najviac dve deti.' : 'Súrodenci budú snívať spolu. V rozprávke môže byť najviac ' + MAX_KIDS + ' detí.',
+      addKid: () => this.setState({ kids: this.state.kids.concat([{ id: this.state.nextKid, name: '', gender: '', forms: null, formsFor: '', open: false }]), nextKid: this.state.nextKid + 1 }),
+      codeInput: s.code,
+      codeShown: s.codeOpen || !!s.code,
+      codeClosed: !(s.codeOpen || !!s.code),
+      openCode: () => this.setState({ codeOpen: true }),
+      dedHelp: dedHelp,
+      fv: Object.assign({ poznamka: '', venovanie: '', meno: '', email: '', suhlasVop: false, suhlasOou: false, suhlasZacat: false }, s.f),
+      onField: (e) => { const t = e && e.target; if (!t || !t.id) return; const v = t.type === 'checkbox' ? !!t.checked : String(t.value == null ? '' : t.value); if (this.state.f[t.id] === v) return; this.setState({ f: Object.assign({}, this.state.f, { [t.id]: v }) }); },
+      onCodeInput: (e) => { const v = e && e.target ? String(e.target.value || '').slice(0, 20) : ''; if (v !== this.state.code) this.setState({ code: v }); },
+      codeOk: discount > 0 || isRef,
+      codeBad: !discount && !isRef && codeKey.length >= 4,
+      codeMsg: isRef ? 'Ďakujeme, kamarátka, ktorá vám nás odporučila, dostane zľavu na ďalšiu sériu.' : discount > 0 ? 'Kód ' + codeKey + ' platí, zľava ' + discount + ' €.' : 'Tento kód nepoznáme. Skontrolujte, prosím, či je napísaný správne.',
+      hasName: hasName,
+      noName: !hasName,
+      coverTitle: coverTitle,
+      coverSize: coverSize,
+      summaryTitle: summaryTitle,
+      summarySub: hasName ? 'Adventná rozprávka na 24 večerov' : '',
+      hasSub: hasName,
+      lines: lines,
+      totalText: toPay + ' €',
+      payLabel: 'Zaplatiť ' + toPay + ' €',
+      deliveryNote: deliveryNote,
+      afterPay: afterPay
+    };
+  }
+}
+
+const __rv = Component.prototype.renderVals;
+Component.prototype.renderVals = function () { const v = __rv.call(this); const x = window.NR.orderExtras(this, v); if (v.totalText === '0 €') x.payLabelNow = this.__nr && this.__nr.busy ? x.payLabelNow : 'Objednať s poukazom'; return Object.assign(v, x); };
+
+return Component;
+})();
+(function () { var P = {"krok": "1", "termin": "podľa dnešného dátumu", "pismoNadpisov": "Shantell Sans", "accent": "#CF3E2A", "accent2": "#BFE6D3"};  NR.boot("objednavka", P); })();
+</script>
+</body>
+</html>

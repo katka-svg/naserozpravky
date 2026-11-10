@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Stiahnutie rozprávky · Naše rozprávky</title>
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/fonts.css">
+<style>
+body{margin:0;background:#FBF8F1;color:#2A2D3E;font-family:'DM Sans',Arial,sans-serif;line-height:1.5}
+main{max-width:560px;margin:0 auto;padding:40px 20px 60px}
+h1{font-family:'Shantell Sans','Nunito',sans-serif;font-variation-settings:'INFM' 100,'BNCE' 35;font-size:32px;line-height:1.15;margin:12px 0 8px}
+.logo{display:flex;align-items:center;gap:10px;font-family:'Shantell Sans',sans-serif;font-variation-settings:'INFM' 100,'BNCE' 35;font-weight:700;font-size:20px;text-decoration:none;color:#2A2D3E}
+.card{background:#fff;border:1.6px solid #45454D;border-radius:24px 10px 22px 12px / 12px 22px 10px 24px;padding:18px;margin-top:20px;display:flex;flex-direction:column;gap:12px}
+a.btn{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;border:1.8px solid #45454D;border-radius:26px 10px 24px 12px / 12px 24px 10px 26px;background:#CF3E2A;color:#fff;font-weight:700;text-decoration:none}
+.meta{color:#5A5F7A}
+.err{color:#B3261E;font-weight:600}
+</style>
+</head>
+<body>
+<main>
+  <a class="logo" href="/"><img src="/assets/favicon.svg" width="30" height="30" alt="">Naše rozprávky</a>
+  <h1 id="t">Vaša rozprávka</h1>
+  <p class="meta" id="s">Načítavam súbory…</p>
+  <div class="card" id="c" hidden></div>
+  <p class="meta" style="margin-top:24px">Súbory si uložte do telefónu alebo počítača, nech ich máte po ruke aj bez internetu. Ak niečo nejde, odpíšte na e-mail od nás.</p>
+</main>
+<script src="/assets/config.js"></script>
+<script>
+(function () {
+  var C = window.NR_CONFIG || {};
+  var q = new URLSearchParams(location.search);
+  var k = q.get('k') || '', s = q.get('s') || '';
+  function get(path) {
+    return fetch(C.api + '/' + path, { headers: { apikey: C.anon, Authorization: 'Bearer ' + C.anon } })
+      .then(function (r) { return r.json().then(function (j) { if (!r.ok) throw new Error(j.chyba || 'Odkaz nefunguje.'); return j; }); });
+  }
+  function err(m) { var e = document.getElementById('s'); e.className = 'err'; e.textContent = m; }
+  function go(kluc) {
+    return get('stiahnut?k=' + encodeURIComponent(k) + '&s=' + encodeURIComponent(kluc)).then(function (r) { location.href = r.url; });
+  }
+  if (!k) { err('V odkaze chýba kľúč. Použite, prosím, odkaz z e-mailu.'); return; }
+  if (s) { document.getElementById('s').textContent = 'Pripravujem súbor…'; go(s).catch(function (e) { err(e.message); }); return; }
+  get('subory?k=' + encodeURIComponent(k)).then(function (r) {
+    document.getElementById('t').textContent = r.nazov;
+    document.getElementById('s').textContent = 'Objednávka ' + r.cislo + '. Kliknite na súbor, ktorý chcete stiahnuť.';
+    var c = document.getElementById('c');
+    r.subory.forEach(function (f) {
+      var a = document.createElement('a');
+      a.className = 'btn'; a.href = '#'; a.innerHTML = '<span></span><span aria-hidden="true">↓</span>';
+      a.firstChild.textContent = f.nazov;
+      a.onclick = function (e) { e.preventDefault(); a.style.opacity = .6; go(f.kluc).catch(function (x) { err(x.message); }).then(function () { a.style.opacity = 1; }); };
+      c.appendChild(a);
+    });
+    c.hidden = false;
+  }).catch(function (e) { err(e.message); });
+})();
+</script>
+</body>
+</html>
