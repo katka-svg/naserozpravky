@@ -84,7 +84,7 @@
         var err = '';
         if (!String(f.meno || '').trim()) err = 'Napíšte, prosím, meno a priezvisko.';
         else if (!/^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(String(f.email || '').trim())) err = 'Skontrolujte, prosím, e-mail.';
-        else if (!f.suhlasVop || !f.suhlasOou || (!gift && !f.suhlasZacat)) err = 'Potvrďte, prosím, súhlasy vyššie.';
+        else if (!gift && !f.suhlasZacat) err = 'Zaškrtnite, prosím, potvrdenie vyššie.';
         if (err) { st.err = err; inst.forceUpdate(); return; }
         st.busy = true; st.err = ''; inst.forceUpdate();
         var deti = (s.kids || []).map(function (k) {
@@ -94,7 +94,7 @@
         req('POST', 'objednavka', {
           verzia: s.version, darcek: gift, deti: deti, meno: f.meno, email: f.email,
           venovanie: f.venovanie || '', poznamka: f.poznamka || '', kod: s.code || '',
-          suhlasy: { vop: !!f.suhlasVop, oou: !!f.suhlasOou, zacat: !!f.suhlasZacat }
+          suhlasy: { vop: true, oou: true, zacat: !!f.suhlasZacat }
         }).then(function (r) {
           try { localStorage.setItem('rozpravka-cislo', r.cislo); } catch (e) {}
           if (r.zaplatene) {
