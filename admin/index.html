@@ -69,6 +69,17 @@ small{color:var(--muted)}
     </div>
     <div id="lmsg2" class="msg"></div>
     <div class="list" id="list"></div>
+    <details style="margin-top:28px">
+      <summary style="cursor:pointer;font-weight:700">Podklady pre účtovníctvo</summary>
+      <p style="margin:10px 0">Zaplatené objednávky za zvolený mesiac podľa dátumu platby. Zrušené objednávky a objednávky za 0 € v nich nie sú.</p>
+      <div class="row" style="align-items:center;gap:10px;flex-wrap:wrap">
+        <label for="ucMes" style="font-weight:700">Mesiac</label>
+        <input id="ucMes" type="month" style="max-width:190px">
+        <button id="bKros">Import pre KROS (TXT)</button>
+        <button id="bCsv">Prehľad (CSV pre Excel)</button>
+      </div>
+      <div id="ucMsg" class="msg"></div>
+    </details>
   </section>
 
   <section id="detail" class="hidden">
@@ -289,6 +300,75 @@ small{color:var(--muted)}
     Array.prototype.forEach.call($('tabs').querySelectorAll('button[data-f]'), function (x) { x.classList.toggle('on', x === b); });
     renderList();
   };
+  // ---------------------------------------------------------------- podklady pre účtovníctvo
+  (function () {
+    var d = new Date(); $('ucMes').value = d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2);
+    var P2 = function (n) { return ('0' + n).slice(-2); };
+    function den(iso) { // dátum platby v slovenskom čase
+      var x = new Date(new Date(iso).toLocaleString('en-US', { timeZone: 'Europe/Bratislava' }));
+      return { ym: x.getFullYear() + '-' + P2(x.getMonth() + 1), sk: P2(x.getDate()) + '.' + P2(x.getMonth() + 1) + '.' + x.getFullYear() };
+    }
+    function vyber() {
+      var ym = $('ucMes').value;
+      return orders.filter(function (o) { return o.zaplatene_at && o.status !== 'zrusena' && o.suma_cents > 0 && den(o.zaplatene_at).ym === ym; })
+        .sort(function (a, b) { return a.zaplatene_at < b.zaplatene_at ? -1 : 1; });
+    }
+    function num(c) { return (c / 100).toFixed(2).replace('.', ','); }
+    function cisty(x) { return String(x == null ? '' : x).replace(/[\t\r\n]+/g, ' ').trim(); }
+    function popis(o) { return (o.darcek ? 'Darčekový poukaz: ' : '') + 'Adventná rozprávka Tajomstvo Vianoc, ' + (o.verzia === 'audio' ? 'PDF + audio' : 'PDF'); }
+    // Windows-1250, v ktorom KROS číta textový import
+    var CP = { '€': 0x80, 'Š': 0x8A, 'Ť': 0x8D, 'Ž': 0x8E, 'š': 0x9A, 'ť': 0x9D, 'ž': 0x9E, 'Ľ': 0xBC, 'ľ': 0xBE, 'Ŕ': 0xC0, 'Á': 0xC1, 'Ä': 0xC4, 'Ĺ': 0xC5, 'Č': 0xC8, 'É': 0xC9, 'Ě': 0xCC, 'Í': 0xCD, 'Ď': 0xCF, 'Ň': 0xD2, 'Ó': 0xD3, 'Ô': 0xD4, 'Ö': 0xD6, 'Ř': 0xD8, 'Ů': 0xD9, 'Ú': 0xDA, 'Ü': 0xDC, 'Ý': 0xDD, 'ŕ': 0xE0, 'á': 0xE1, 'ä': 0xE4, 'ĺ': 0xE5, 'č': 0xE8, 'é': 0xE9, 'ě': 0xEC, 'í': 0xED, 'ď': 0xEF, 'ň': 0xF2, 'ó': 0xF3, 'ô': 0xF4, 'ö': 0xF6, 'ř': 0xF8, 'ů': 0xF9, 'ú': 0xFA, 'ü': 0xFC, 'ý': 0xFD, 'ő': 0xF5, 'Ő': 0xD5, 'ű': 0xFB, 'Ű': 0xDB, 'ł': 0xB3, 'Ł': 0xA3, '§': 0xA7, '·': 0xB7 };
+    function cp1250(t) {
+      var out = new Uint8Array(t.length);
+      for (var i = 0; i < t.length; i++) { var ch = t[i], c = t.charCodeAt(i); out[i] = c < 128 ? c : (CP[ch] || 63); }
+      return out;
+    }
+    function stiahni(bytes, nazov, typ) {
+      var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([bytes], { type: typ })); a.download = nazov;
+      document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+    }
+    function hlas(list, co) {
+      var spolu = list.reduce(function (s, o) { return s + o.suma_cents; }, 0);
+      $('ucMsg').className = 'msg ok'; $('ucMsg').textContent = co + ': ' + list.length + ' objednávok, spolu ' + num(spolu) + ' €.';
+    }
+    function prazdne(list) {
+      if (list.length) return false;
+      $('ucMsg').className = 'msg err'; $('ucMsg').textContent = 'V tomto mesiaci nie je žiadna zaplatená objednávka.'; return true;
+    }
+    $('bKros').onclick = function () {
+      // KROS textový import faktúr (riadky R00, R01 = hlavička s 97 stĺpcami, R02 = položka s 58 stĺpcami), neplatiteľ DPH
+      var list = vyber(); if (prazdne(list)) return;
+      var lines = ['R00\tT01'];
+      list.forEach(function (o) {
+        var dt = den(o.zaplatene_at).sk, suma = num(o.suma_cents), h = [], p = [], i;
+        for (i = 0; i < 97; i++) h.push(''); for (i = 0; i < 58; i++) p.push('');
+        h[0] = 'R01'; h[1] = o.cislo; h[2] = cisty(o.meno_zakaznika); h[4] = dt; h[5] = dt; h[6] = dt;
+        h[7] = '0,00'; h[8] = '0,00'; h[9] = '0,00'; h[10] = suma; h[11] = '19'; h[12] = '23'; h[13] = '0,00'; h[14] = '0,00'; h[15] = '0,00';
+        h[16] = suma; h[17] = '0'; h[34] = 'Katarína Matečná'; h[37] = 'Platobná karta'; h[39] = 'EUR'; h[40] = '1'; h[41] = '1'; h[42] = suma;
+        h[44] = 'Platba kartou cez Stripe, ' + cisty(o.email); h[45] = popis(o); h[46] = 'Slovensko';
+        h[50] = 'ČSOB'; h[56] = 'SK1275000000004034768956'; h[59] = 'Slovensko'; h[60] = '-2'; h[61] = '3'; h[63] = '-2'; h[65] = '0,00'; h[66] = '0'; h[69] = '0,00';
+        h[70] = o.cislo.replace(/\D/g, ''); h[84] = '0'; h[88] = '0';
+        lines.push(h.join('\t'));
+        p[0] = 'R02'; p[1] = popis(o) + (o.kod ? ', kód ' + cisty(o.kod) : ''); p[2] = '1'; p[3] = 'ks'; p[4] = suma; p[5] = 'X'; p[7] = suma; p[8] = '0'; p[9] = 'V';
+        p[44] = '-2'; p[45] = '3'; p[49] = '0'; p[50] = suma;
+        lines.push(p.join('\t'));
+      });
+      stiahni(cp1250(lines.join('\r\n') + '\r\n'), 'KROS_import_nase-rozpravky_' + $('ucMes').value + '.txt', 'text/plain');
+      hlas(list, 'Import pre KROS');
+    };
+    $('bCsv').onclick = function () {
+      var list = vyber(); if (prazdne(list)) return;
+      var q = function (x) { return '"' + cisty(x).replace(/"/g, '""') + '"'; };
+      var rows = [['Číslo objednávky', 'Dátum platby', 'Zákazník', 'E-mail', 'Položka', 'Zľavový kód', 'Suma EUR', 'Spôsob úhrady'].map(q).join(';')];
+      list.forEach(function (o) {
+        rows.push([o.cislo, den(o.zaplatene_at).sk, o.meno_zakaznika, o.email, popis(o), o.kod || '', num(o.suma_cents), 'karta cez Stripe'].map(q).join(';'));
+      });
+      var spolu = list.reduce(function (s, o) { return s + o.suma_cents; }, 0);
+      rows.push(['Spolu', '', '', '', '', '', num(spolu), ''].map(q).join(';'));
+      stiahni(new TextEncoder().encode('﻿' + rows.join('\r\n') + '\r\n'), 'Prehlad_objednavok_' + $('ucMes').value + '.csv', 'text/csv');
+      hlas(list, 'Prehľad');
+    };
+  })();
   $('reload').onclick = load;
   $('bE6').onclick = function () {
     var btn = this; btn.disabled = true; $('lmsg2').className = 'msg'; $('lmsg2').textContent = 'Zisťujem, komu poslať…';
