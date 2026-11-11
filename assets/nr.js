@@ -55,10 +55,25 @@
   var NR = window.NR = { codes: {}, checked: {} };
 
   // ---------------------------------------------------------------- objednávka
+  var KOSIK = 'rozpravka-kosik';
   NR.orderExtras = function (inst, v) {
     var st = inst.__nr || (inst.__nr = { busy: false, err: '', mounted: false, codeT: null });
     var s = inst.state || {};
     if (st.mounted && !v.s3) { unmountCheckout(); st.mounted = false; }
+    var cur = v.s3 ? 3 : v.s2 ? 2 : 1;
+    if (st.ready) {
+      // zapamätanie rozpracovanej objednávky (bez potvrdenia, to sa zaškrtáva vždy nanovo)
+      try {
+        var fs = Object.assign({}, s.f || {}); delete fs.suhlasZacat;
+        localStorage.setItem(KOSIK, JSON.stringify({ t: Date.now(), step: cur, version: s.version, gift: !!s.gift, kids: s.kids, nextKid: s.nextKid, code: s.code || '', codeOpen: !!s.codeOpen, f: fs }));
+      } catch (e) {}
+      // šípka späť v prehliadači vracia o krok, nie preč z objednávky
+      if (st.step !== cur) {
+        if (!st.pop && st.step) { try { history.pushState({ nrStep: cur }, ''); } catch (e) {} window.scrollTo(0, 0); }
+        st.pop = false; st.step = cur;
+      }
+    }
+    if ((s.f || {}).suhlasZacat && st.zacatErr) { st.zacatErr = false; st.err = ''; }
     st.total = parseFloat(String(v.totalText || '0').replace(',', '.')) || 0; // suma na meranie nákupu
     // overenie kódu na serveri (poukazy)
     var key = norm(s.code);
@@ -73,6 +88,9 @@
       }, 450);
     }
     return {
+      zacatErr: !!st.zacatErr,
+      zacatBorder: st.zacatErr ? '#B3261E' : 'transparent',
+      zacatBg: st.zacatErr ? '#FBE9E7' : 'transparent',
       payBusy: st.busy,
       payErr: st.err,
       hasPayErr: !!st.err,
@@ -85,7 +103,10 @@
         var err = '';
         if (!String(f.meno || '').trim()) err = 'Napíšte, prosím, meno a priezvisko.';
         else if (!/^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(String(f.email || '').trim())) err = 'Skontrolujte, prosím, e-mail.';
-        else if (!gift && !f.suhlasZacat) err = 'Zaškrtnite, prosím, potvrdenie vyššie.';
+        else if (!gift && !f.suhlasZacat) {
+          err = 'Ešte chýba potvrdenie vyššie, označili sme ho červenou.'; st.zacatErr = true;
+          setTimeout(function () { var b = document.getElementById('suhlasZacatBox'); if (b) { b.scrollIntoView({ behavior: 'smooth', block: 'center' }); var c = document.getElementById('suhlasZacat'); if (c) c.focus({ preventScroll: true }); } }, 60);
+        }
         if (err) { st.err = err; inst.forceUpdate(); return; }
         st.busy = true; st.err = ''; inst.forceUpdate();
         var deti = (s.kids || []).map(function (k) {
@@ -143,10 +164,38 @@
     if (page === 'objednavka') {
       var kod = q.get('kod');
       var patch = {};
+      var k = null;
+      try { k = JSON.parse(localStorage.getItem(KOSIK) || 'null'); } catch (e) {}
+      // rozpracovaná objednávka sa pamätá 7 dní; nový výber z úvodnej stránky má prednosť
+      var vyb = {};
+      try { vyb = JSON.parse(localStorage.getItem('rozpravka-vyber') || '{}') || {}; } catch (e) {}
+      if (k && k.t && Date.now() - k.t < 7 * 864e5 && Array.isArray(k.kids) && k.kids.length) {
+        patch = { step: Math.min(3, Math.max(1, k.step || 1)), version: k.version === 'pdf' ? 'pdf' : 'audio', gift: !!k.gift,
+          kids: k.kids, nextKid: k.nextKid || k.kids.length + 1, code: String(k.code || '').slice(0, 20), codeOpen: !!k.codeOpen, f: k.f || {} };
+        if (vyb.cas && vyb.cas > k.t) {
+          // medzitým si na úvodnej stránke vybral znova: platí nový výber, ostatné údaje ostávajú
+          patch.step = 1; patch.version = inst.state.version; patch.gift = inst.state.gift;
+          var nove = String(vyb.meno || '').trim();
+          var stare = k.kids.map(function (x) { return String(x.name || '').trim(); }).filter(Boolean).join(' a ');
+          if (nove && nove !== stare) { delete patch.kids; delete patch.nextKid; }
+        }
+      }
       if (kod) { patch.code = kod.slice(0, 20); patch.codeOpen = true; }
       if (q.get('darcek') === '1') patch.gift = true;
       if (Object.keys(patch).length) inst.setState(patch);
+      var st = inst.__nr || (inst.__nr = { busy: false, err: '', mounted: false, codeT: null });
+      var ciel = patch.step || 1;
+      try { history.replaceState({ nrStep: 1 }, ''); for (var i = 2; i <= ciel; i++) history.pushState({ nrStep: i }, ''); } catch (e) {}
+      st.step = ciel; st.ready = true;
+      window.addEventListener('popstate', function (e) {
+        var n = e.state && e.state.nrStep;
+        if (!n) return;
+        st.pop = true; st.err = '';
+        inst.setState({ step: n });
+      });
+      inst.forceUpdate();
     }
+    if (page === 'dakujeme') { try { localStorage.removeItem(KOSIK); } catch (e) {} }
     if (page === 'dakujeme' && q.get('audio') === '1') inst.setState({ offer: 'accepted' });
     return inst;
   };

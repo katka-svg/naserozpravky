@@ -1154,7 +1154,7 @@ class Component extends DCLogic {
       const meno = raw.split(' ').map((w) => (['a', 'aj', 'i', 's', 'so', 'alebo', 'či'].includes(w.toLowerCase()) ? w.toLowerCase() : w.charAt(0).toUpperCase() + w.slice(1))).join(' ');
       let prev = {};
       try { prev = JSON.parse(localStorage.getItem('rozpravka-vyber') || '{}') || {}; } catch (e) { prev = {}; }
-      localStorage.setItem('rozpravka-vyber', JSON.stringify(Object.assign({}, prev, { meno: meno, typ: 'advent', verzia: this.state.version, darcek: false }, extra || {})));
+      localStorage.setItem('rozpravka-vyber', JSON.stringify(Object.assign({}, prev, { meno: meno, typ: 'advent', verzia: this.state.version, darcek: false, cas: Date.now() }, extra || {})));
     } catch (e) {}
   }
 
