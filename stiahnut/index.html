@@ -26,9 +26,10 @@ a.btn.light{background:#fff;color:#2A2D3E}
 #dnes{background:#1E2A5E;border-color:#1E2A5E;font-size:18px;min-height:64px}
 #dnes small{display:block;font-weight:500;opacity:.85;font-size:14px}
 ol.v{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
-ol.v li{border-top:1.4px dashed #C9CCD9}
+ol.v li{border-top:1.4px dashed #C9CCD9;display:flex;align-items:center;gap:6px}
+ol.v .dl{flex:none;width:42px;height:42px;margin-right:4px;border:1.4px solid #45454D;border-radius:50%;display:flex;align-items:center;justify-content:center;text-decoration:none;color:inherit;font-size:18px;background:#fff}
 ol.v li:first-child{border-top:none}
-ol.v button{display:flex;align-items:center;gap:12px;width:100%;min-height:58px;padding:8px 4px;border:none;background:none;font:inherit;color:inherit;text-align:left;cursor:pointer}
+ol.v button{display:flex;align-items:center;gap:12px;flex:1;min-width:0;min-height:58px;padding:8px 4px;border:none;background:none;font:inherit;color:inherit;text-align:left;cursor:pointer}
 ol.v .n{flex:none;width:38px;height:38px;border-radius:50%;border:1.6px solid #45454D;display:flex;align-items:center;justify-content:center;font-weight:700;background:#FFF4DF}
 ol.v .t{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.25}
 ol.v .t b{font-weight:700}
@@ -136,7 +137,16 @@ ol.v li.on .n{background:#CF3E2A;color:#fff;border-color:#CF3E2A}
         b.querySelector('b').textContent = nazov;
         b.setAttribute('aria-label', 'Prehrať ' + (i + 1) + '. december: ' + nazov);
         b.onclick = function () { pusti(i + 1); };
-        li.appendChild(b); ol.appendChild(li);
+        var dl = document.createElement('a');
+        dl.className = 'dl'; dl.href = '#'; dl.textContent = '↓';
+        dl.title = 'Stiahnuť MP3'; dl.setAttribute('aria-label', 'Stiahnuť ' + (i + 1) + '. december ako MP3');
+        dl.onclick = function (e) {
+          e.preventDefault(); dl.style.opacity = .5;
+          go('audio' + (i < 9 ? '0' : '') + (i + 1)).catch(function () {
+            $('aerr').textContent = 'Túto nahrávku sa teraz nepodarilo stiahnuť. Skúste to znova, alebo si nižšie stiahnite všetky nahrávky naraz.'; $('aerr').hidden = false;
+          }).then(function () { dl.style.opacity = 1; });
+        };
+        li.appendChild(b); li.appendChild(dl); ol.appendChild(li);
       });
       var d = new Date();
       if (d.getMonth() === 11 && d.getDate() <= 24) {
