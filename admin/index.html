@@ -314,7 +314,11 @@ small{color:var(--muted)}
   $('bE4').onclick = function () { act(this, 'e4', {}, 'E4 je odoslaný.', 'Odoslať zákazníkovi hotovú rozprávku (E4)? Skontrolovala si súbory?'); };
   $('bE2').onclick = function () { act(this, 'e2', { otazka: $('e2t').value }, 'Otázka je odoslaná.', 'Poslať zákazníkovi túto otázku?'); };
   $('bE1').onclick = function () { act(this, 'e1_znova', {}, 'Potvrdenie je odoslané znova.', 'Znova poslať zákazníkovi potvrdenie objednávky (pri darčeku poukaz)?'); };
-  $('bCancel').onclick = function () { act(this, 'stav', { status: 'zrusena' }, 'Objednávka je označená ako zrušená. Peniaze vráť v Stripe.', 'Označiť objednávku ako zrušenú?'); };
+  $('bCancel').onclick = function () {
+    if (!confirm('Označiť objednávku ako zrušenú?')) return;
+    var mail = confirm('Poslať zákazníkovi e-mail, že objednávka je zrušená a peniaze vraciame?\n\nOK = poslať e-mail\nZrušiť = zrušiť bez e-mailu (napríklad pri teste)');
+    act(this, 'stav', { status: 'zrusena', email: mail }, 'Objednávka je označená ako zrušená' + (mail ? ', zákazník dostal e-mail' : ', bez e-mailu') + '. Peniaze vráť v Stripe.');
+  };
 
   function start() {
     sb.auth.getSession().then(function (r) {
