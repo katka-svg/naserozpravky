@@ -1,1 +1,1 @@
-window.NR_CONFIG = {"supabase": "https://qqcxbmjssuesmhlpuegf.supabase.co", "anon": "sb_publishable_Ufi94cPOOkaavUtow9tUNA_Jc97AQ5K", "api": "https://qqcxbmjssuesmhlpuegf.supabase.co/functions/v1/api"};
+window.NR_CONFIG = {"supabase": "https://qqcxbmjssuesmhlpuegf.supabase.co", "anon": "sb_publishable_Ufi94cPOOkaavUtow9tUNA_Jc97AQ5K", "api": "https://qqcxbmjssuesmhlpuegf.supabase.co/functions/v1/api", "pixel": ""};

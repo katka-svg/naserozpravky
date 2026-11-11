@@ -59,6 +59,7 @@
     var st = inst.__nr || (inst.__nr = { busy: false, err: '', mounted: false, codeT: null });
     var s = inst.state || {};
     if (st.mounted && !v.s3) { unmountCheckout(); st.mounted = false; }
+    st.total = parseFloat(String(v.totalText || '0').replace(',', '.')) || 0; // suma na meranie nákupu
     // overenie kódu na serveri (poukazy)
     var key = norm(s.code);
     if (key.length >= 4 && !NR.checked[key] && !NR.codes[key]) {
@@ -96,7 +97,7 @@
           venovanie: f.venovanie || '', poznamka: f.poznamka || '', kod: s.code || '',
           suhlasy: { vop: true, oou: true, zacat: !!f.suhlasZacat }
         }).then(function (r) {
-          try { localStorage.setItem('rozpravka-cislo', r.cislo); } catch (e) {}
+          try { localStorage.setItem('rozpravka-cislo', r.cislo); localStorage.setItem('rozpravka-suma', String(st.total || 0)); } catch (e) {}
           if (r.zaplatene) {
             location.href = '/dakujeme/?objednavka=' + encodeURIComponent(r.cislo) + '&session_id=' + encodeURIComponent(r.overenie || '');
             return null;
