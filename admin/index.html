@@ -156,6 +156,10 @@ small{color:var(--muted)}
     $('dFiles').innerHTML = SUB.filter(function (x) { return x[0] !== 'audio' || cur.verzia === 'audio'; }).map(function (x) {
       return '<span class="' + (s[x[0]] ? 'ok' : 'miss') + '">' + (s[x[0]] ? '✓' : '·') + '</span><span>' + x[1] + '</span>';
     }).join('');
+    if (cur.verzia === 'audio') {
+      var n = Object.keys(s).filter(function (k) { return /^audio\d\d$/.test(k); }).length;
+      $('dFiles').innerHTML += '<span class="' + (n === 24 ? 'ok' : 'miss') + '">' + (n === 24 ? '✓' : '·') + '</span><span>Nahrávky do prehrávača: ' + n + ' z 24</span>';
+    }
   }
   function openDetail(id) {
     return api('detail', { id: id }).then(function (r) {
@@ -185,35 +189,63 @@ small{color:var(--muted)}
     for (var i = 0; i < SUB.length; i++) if (SUB[i][2].test(name)) return SUB[i][0];
     return null;
   }
+  // nahrávka jedného večera: v názve je číslo 1 až 24 (01.mp3, vecer-07.mp3, 12-december.mp3)
+  function mp3Key(path) {
+    var base = path.split('/').pop();
+    if (!/\.mp3$/i.test(base)) return null;
+    var m = base.match(/(\d{1,2})(?!\d)/);
+    var n = m ? Number(m[1]) : 0;
+    return n >= 1 && n <= 24 ? 'audio' + (n < 10 ? '0' : '') + n : null;
+  }
+  function fromZip(f, out) {
+    return JSZip.loadAsync(f).then(function (z) {
+      var ps = [];
+      z.forEach(function (path, entry) {
+        if (entry.dir || /(^|\/)(__MACOSX|\._)/.test(path)) return;
+        var mk = mp3Key(path);
+        if (mk) {
+          ps.push(entry.async('blob').then(function (b) { out.push({ kluc: mk, file: new File([b], mk + '.mp3', { type: 'audio/mpeg' }) }); }));
+          return;
+        }
+        var k = classify(path);
+        if (!k) return;
+        ps.push(entry.async('blob').then(function (b) {
+          var type = /\.pdf$/i.test(path) ? 'application/pdf' : /\.zip$/i.test(path) ? 'application/zip' : 'image/jpeg';
+          var file = new File([b], path.split('/').pop(), { type: type });
+          out.push({ kluc: k, file: file });
+          // ZIP s nahrávkami vnútri hlavného ZIP: rozbalí sa tiež, aby sa dali prehrávať po večeroch
+          if (k === 'audio') return fromZip(file, out);
+        }));
+      });
+      return Promise.all(ps);
+    });
+  }
   function collect(fileList) {
     var out = [];
     var jobs = Array.prototype.map.call(fileList, function (f) {
-      if (/\.zip$/i.test(f.name) && !/audio|nahravky/i.test(f.name)) {
-        return JSZip.loadAsync(f).then(function (z) {
-          var ps = [];
-          z.forEach(function (path, entry) {
-            if (entry.dir) return;
-            var k = classify(path);
-            if (!k) return;
-            ps.push(entry.async('blob').then(function (b) {
-              var type = /\.pdf$/i.test(path) ? 'application/pdf' : /\.zip$/i.test(path) ? 'application/zip' : 'image/jpeg';
-              out.push({ kluc: k, file: new File([b], path.split('/').pop(), { type: type }) });
-            }));
-          });
-          return Promise.all(ps);
-        });
+      if (/\.zip$/i.test(f.name)) {
+        // ZIP s nahrávkami sa nahrá celý (na stiahnutie) a zároveň sa z neho vyberú jednotlivé večery
+        if (classify(f.name) === 'audio') out.push({ kluc: 'audio', file: f });
+        return fromZip(f, out);
       }
+      var mk = mp3Key(f.name);
+      if (mk) { out.push({ kluc: mk, file: new File([f], mk + '.mp3', { type: 'audio/mpeg' }) }); return Promise.resolve(); }
       var k = classify(f.name);
       if (k) out.push({ kluc: k, file: f });
       return Promise.resolve();
     });
-    return Promise.all(jobs).then(function () { return out; });
+    return Promise.all(jobs).then(function () {
+      // každý kľúč len raz (posledný vyhráva)
+      var seen = {}, uniq = [];
+      for (var i = out.length - 1; i >= 0; i--) if (!seen[out[i].kluc]) { seen[out[i].kluc] = 1; uniq.unshift(out[i]); }
+      return uniq;
+    });
   }
   function upload(fileList) {
     if (!cur) return;
     $('upmsg').className = 'msg'; $('upmsg').textContent = 'Pripravujem súbory…';
     collect(fileList).then(function (items) {
-      if (!items.length) throw new Error('Nenašiel som žiadny známy súbor. Názvy majú končiť napríklad na -citanie.pdf alebo obalka.jpg.');
+      if (!items.length) throw new Error('Nenašiel som žiadny známy súbor. Názvy majú končiť napríklad na -citanie.pdf alebo obalka.jpg, nahrávky sú MP3 s číslom večera.');
       return api('nahraj', { id: cur.id, subory: items.map(function (x) { return { kluc: x.kluc, nazov: x.file.name }; }) }).then(function (r) {
         var map = {}, n = 0;
         return r.nahraj.reduce(function (p, u) {
