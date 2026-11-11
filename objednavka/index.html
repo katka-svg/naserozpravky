@@ -603,8 +603,7 @@ class Component extends DCLogic {
     const extraKids = Math.max(0, s.kids.length - 1);
     const extra = extraKids * EXTRA_KID;
     const total = base + extra;
-    const CODES = Object.assign({ SKOLKAR: 5 }, (window.NR && window.NR.codes) || {});
-    const isRef = !!(window.NR && window.NR.refs && window.NR.refs[String(s.code || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, '').toUpperCase()]);
+    const CODES = Object.assign({ SKOLKAR: 3 }, (window.NR && window.NR.codes) || {});
     const codeKey = String(s.code || '').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\s+/g, '').toUpperCase();
     const codeAmount = CODES[codeKey] || 0;
     const discount = codeAmount ? Math.min(codeAmount, total) : 0;
@@ -690,9 +689,9 @@ class Component extends DCLogic {
       fv: Object.assign({ poznamka: '', venovanie: '', meno: '', email: '', suhlasVop: false, suhlasOou: false, suhlasZacat: false }, s.f),
       onField: (e) => { const t = e && e.target; if (!t || !t.id) return; const v = t.type === 'checkbox' ? !!t.checked : String(t.value == null ? '' : t.value); if (this.state.f[t.id] === v) return; this.setState({ f: Object.assign({}, this.state.f, { [t.id]: v }) }); },
       onCodeInput: (e) => { const v = e && e.target ? String(e.target.value || '').slice(0, 20) : ''; if (v !== this.state.code) this.setState({ code: v }); },
-      codeOk: discount > 0 || isRef,
-      codeBad: !discount && !isRef && codeKey.length >= 4,
-      codeMsg: isRef ? 'Ďakujeme, kamarátka, ktorá vám nás odporučila, dostane zľavu na ďalšiu sériu.' : discount > 0 ? 'Kód ' + codeKey + ' platí, zľava ' + discount + ' €.' : 'Tento kód nepoznáme. Skontrolujte, prosím, či je napísaný správne.',
+      codeOk: discount > 0,
+      codeBad: !discount && codeKey.length >= 4,
+      codeMsg: discount > 0 ? 'Kód ' + codeKey + ' platí, zľava ' + discount + ' €.' : 'Tento kód nepoznáme. Skontrolujte, prosím, či je napísaný správne.',
       hasName: hasName,
       noName: !hasName,
       coverTitle: coverTitle,

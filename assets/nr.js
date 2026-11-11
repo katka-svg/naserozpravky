@@ -52,14 +52,14 @@
     return String(raw || '').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\s+/g, '').toUpperCase();
   }
 
-  var NR = window.NR = { codes: {}, refs: {}, checked: {} };
+  var NR = window.NR = { codes: {}, checked: {} };
 
   // ---------------------------------------------------------------- objednávka
   NR.orderExtras = function (inst, v) {
     var st = inst.__nr || (inst.__nr = { busy: false, err: '', mounted: false, codeT: null });
     var s = inst.state || {};
     if (st.mounted && !v.s3) { unmountCheckout(); st.mounted = false; }
-    // overenie kódu na serveri (poukazy, odporúčania)
+    // overenie kódu na serveri (poukazy)
     var key = norm(s.code);
     if (key.length >= 4 && !NR.checked[key] && !NR.codes[key]) {
       clearTimeout(st.codeT);
@@ -67,7 +67,6 @@
         NR.checked[key] = true;
         req('POST', 'kod', { kod: key, verzia: s.version, darcek: !!s.gift, deti: (s.kids || []).length }).then(function (r) {
           if (r.zlava_eur > 0) NR.codes[key] = r.zlava_eur;
-          if (r.odporucil) NR.refs[key] = true;
           inst.forceUpdate();
         }).catch(function () { NR.checked[key] = false; });
       }, 450);
@@ -116,21 +115,10 @@
 
   // ---------------------------------------------------------------- ďakovná stránka
   NR.thanksExtras = function (inst) {
-    var st = inst.__nr || (inst.__nr = { ref: '', busy: false, err: '', mounted: false, loaded: false });
+    var st = inst.__nr || (inst.__nr = { busy: false, err: '', mounted: false, loaded: false });
     var q = new URLSearchParams(location.search);
     var cislo = q.get('objednavka') || '';
-    if (!st.loaded && cislo) {
-      st.loaded = true;
-      var tries = 0;
-      var load = function () {
-        req('GET', 'stav?objednavka=' + encodeURIComponent(cislo) + '&session_id=' + encodeURIComponent(q.get('session_id') || '')).then(function (r) {
-          if (r.odporucanie_kod) { st.ref = r.odporucanie_kod; inst.forceUpdate(); } else if (++tries < 8) setTimeout(load, 1500);
-        }).catch(function () { if (++tries < 8) setTimeout(load, 2000); });
-      };
-      load();
-    }
     return {
-      refCode: st.ref || '…',
       accept: function () {
         if (st.busy) return;
         if (!cislo) { st.err = 'Číslo objednávky sa nenašlo, napíšte nám a doplatok pridáme ručne.'; inst.forceUpdate(); return; }
@@ -144,11 +132,6 @@
       acceptBusy: st.busy,
       doplatokErr: st.err,
       hasDoplatokErr: !!st.err,
-      copy: function () {
-        var t = st.ref;
-        if (t && navigator.clipboard) navigator.clipboard.writeText(t).catch(function () {});
-        inst.setState({ copied: true });
-      }
     };
   };
 

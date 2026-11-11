@@ -165,7 +165,7 @@ small{color:var(--muted)}
       var rows = [['Zákazník', o.meno_zakaznika], ['E-mail', '<a href="mailto:' + esc(o.email) + '">' + esc(o.email) + '</a>'], ['Verzia', o.verzia === 'audio' ? 'PDF + audio' : 'PDF'],
         ['Suma', eur(o.suma_cents) + (o.kod ? ' (kód ' + esc(o.kod) + ')' : '')], ['Zaplatené', when(o.zaplatene_at)], ['Dodať', o.vcas ? 'najneskôr 30. 11.' : 'do 3 pracovných dní'],
         ['Potvrdenie', o.e1_at ? 'odoslané ' + when(o.e1_at) : '<span class="err">neodišlo, pošli ho znova nižšie</span>'],
-        ['Darček', o.darcek ? 'áno' : 'nie'], ['Venovanie', esc(o.venovanie || 'automatická veta')], ['Poznámka', esc(o.poznamka || '')], ['Odporučil', esc(o.odporucil || '')]];
+        ['Darček', o.darcek ? 'áno' : 'nie'], ['Venovanie', esc(o.venovanie || 'automatická veta')], ['Poznámka', esc(o.poznamka || '')]];
       $('dInfo').innerHTML = rows.map(function (x) { return '<dt>' + x[0] + '</dt><dd>' + (x[0] === 'E-mail' || x[0] === 'Potvrdenie' ? x[1] : (x[1] || '')) + '</dd>'; }).join('');
       $('dKids').innerHTML = (o.deti || []).map(function (d) {
         return '<p style="margin:0 0 8px"><b>' + esc(d.meno) + '</b> <span class="meta">· ' + (d.rod === 'f' ? 'dievčatko' : 'chlapček') + '</span><br>' +

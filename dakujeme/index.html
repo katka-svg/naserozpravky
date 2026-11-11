@@ -99,17 +99,6 @@ input:focus,select:focus,textarea:focus{outline:3px solid #F4B740;outline-offset
 
 
 
-<section aria-labelledby="odporucte" style="background: #BFE6D3; border: 1.8px solid #45454D; border-radius: 30px 12px 28px 14px / 14px 28px 12px 30px; box-shadow: none; padding: clamp(22px, 3.5vw, 36px); display: flex; flex-wrap: wrap; align-items: center; gap: 24px 40px;">
-<div style="flex: 2 1 420px; min-width: 0; display: flex; flex-direction: column; gap: 12px;">
-<h2 id="odporucte" style="margin: 0; font-family: 'Shantell Sans', 'Nunito', system-ui, sans-serif; font-weight: 700; font-variation-settings: 'INFM' 100, 'BNCE' 35; font-size: clamp(26px, 3vw, 36px); line-height: 1.12; text-wrap: balance;">Odporučte nás kamarátke</h2>
-<p style="margin: 0; text-wrap: pretty;">Keď u nás objedná s vaším kódom, dostanete zľavu na ďalšiu sériu našich rozprávok, napríklad Na dobrú noc alebo K príležitosti, keď ich spustíme.</p>
-</div>
-<div style="flex: 1 1 280px; min-width: 0; display: flex; flex-direction: column; gap: 10px;">
-<p style="margin: 0; padding: 14px 16px; border-radius: 16px; background: #FFFFFF; border: 2px dashed #2A2D3E; font-family: 'Shantell Sans', 'Nunito', system-ui, sans-serif; font-weight: 700; font-variation-settings: 'INFM' 100, 'BNCE' 35; font-size: 22px; text-align: center; letter-spacing: 0.04em;">…</p>
-<button type="button" data-dc-click="h3" style="min-height: 52px; padding: 12px 20px; border-radius: 26px 10px 24px 12px / 12px 24px 10px 26px; border: 1.8px solid #45454D; background: #FFFFFF; color: #2A2D3E; font: inherit; font-weight: 700; font-size: 17px; cursor: pointer;">Skopírovať kód</button>
-</div>
-</section>
-
 <p style="margin: 0; text-align: center; color: #444A66;">Máte otázku? Napíšte nám na <a href="mailto:info@ateliermatecna.sk">info@ateliermatecna.sk</a>, odpovedáme do jedného pracovného dňa.</p>
 </main>
 
@@ -198,17 +187,6 @@ input:focus,select:focus,textarea:focus{outline:3px solid #F4B740;outline-offset
 </section>
 </sc-if>
 
-<section aria-labelledby="odporucte" style="background: {{accent2}}; border: 1.8px solid #45454D; border-radius: 30px 12px 28px 14px / 14px 28px 12px 30px; box-shadow: none; padding: clamp(22px, 3.5vw, 36px); display: flex; flex-wrap: wrap; align-items: center; gap: 24px 40px;">
-<div style="flex: 2 1 420px; min-width: 0; display: flex; flex-direction: column; gap: 12px;">
-<h2 id="odporucte" style="margin: 0; font-family: {{headFont}}; font-weight: {{headWeight}}; font-variation-settings: {{headVar}}; font-size: clamp(26px, 3vw, 36px); line-height: 1.12; text-wrap: balance;">Odporučte nás kamarátke</h2>
-<p style="margin: 0; text-wrap: pretty;">Keď u nás objedná s vaším kódom, dostanete zľavu na ďalšiu sériu našich rozprávok, napríklad Na dobrú noc alebo K príležitosti, keď ich spustíme.</p>
-</div>
-<div style="flex: 1 1 280px; min-width: 0; display: flex; flex-direction: column; gap: 10px;">
-<p style="margin: 0; padding: 14px 16px; border-radius: 16px; background: #FFFFFF; border: 2px dashed #2A2D3E; font-family: {{headFont}}; font-weight: {{headWeight}}; font-variation-settings: {{headVar}}; font-size: 22px; text-align: center; letter-spacing: 0.04em;">{{refCode}}</p>
-<button type="button" onClick="{{copy}}" style="min-height: 52px; padding: 12px 20px; border-radius: 26px 10px 24px 12px / 12px 24px 10px 26px; border: 1.8px solid #45454D; background: #FFFFFF; color: #2A2D3E; font: inherit; font-weight: 700; font-size: 17px; cursor: pointer;">{{copyLabel}}</button>
-</div>
-</section>
-
 <p style="margin: 0; text-align: center; color: #444A66;">Máte otázku? Napíšte nám na <a href="mailto:info@ateliermatecna.sk">info@ateliermatecna.sk</a>, odpovedáme do jedného pracovného dňa.</p>
 </main>
 
@@ -238,7 +216,6 @@ class Component extends DCLogic {
     const meno = mena.length ? mena.join(', ') : (typeof order.meno === 'string' && order.meno ? order.meno : (typeof landing.meno === 'string' ? landing.meno : ''));
     this.state = {
       offer: 'open',
-      copied: false,
       meno: meno.slice(0, 40),
       typ: 'advent'
     };
@@ -298,9 +275,7 @@ class Component extends DCLogic {
       offerDeclined: s.offer === 'declined',
       accept: () => this.setState({ offer: 'accepted' }),
       decline: () => this.setState({ offer: 'declined' }),
-      acceptedText: 'Výborne! Nahrávky s hlasom Katky pridáme k vašej rozprávke.',
-      copy: () => this.setState({ copied: true }),
-      copyLabel: s.copied ? 'Skopírované' : 'Skopírovať kód'
+      acceptedText: 'Výborne! Nahrávky s hlasom Katky pridáme k vašej rozprávke.'
     };
   }
 }
