@@ -273,17 +273,25 @@ small{color:var(--muted)}
     var chyba = VECERY.filter(function (k) { return !subory[k]; });
     if (chyba.length) return Promise.resolve({ subory: subory, status: cur.status, zip: 'caka', chyba: chyba.length });
     var mam = {}; items.forEach(function (x) { if (/^audio\d\d$/.test(x.kluc)) mam[x.kluc] = x.file; });
-    var zip = new JSZip(), hotovo = 0;
-    return VECERY.reduce(function (p, k) {
-      return p.then(function () {
-        $('upmsg').textContent = 'Skladám ZIP so všetkými nahrávkami: ' + (++hotovo) + ' z 24';
-        var blob = mam[k] ? Promise.resolve(mam[k]) : sb.storage.from('vystupy').download(subory[k]).then(function (x) {
-          if (x.error || !x.data) throw new Error('Nepodarilo sa načítať ' + k + ' na poskladanie ZIP.');
-          return x.data;
+    var zip = new JSZip(), hotovo = 0, odkazy = {};
+    var stiahnut = VECERY.filter(function (k) { return !mam[k]; });
+    // čerstvé jednorazové odkazy, aby prehliadač nepodstrčil staršiu verziu večera z vlastnej pamäte
+    var krok = stiahnut.length ? sb.storage.from('vystupy').createSignedUrls(stiahnut.map(function (k) { return subory[k]; }), 600).then(function (r) {
+      if (r.error) throw new Error('Nahrávky sa nepodarilo načítať na poskladanie ZIP.');
+      r.data.forEach(function (x, i) { odkazy[stiahnut[i]] = x.signedUrl; });
+    }) : Promise.resolve();
+    return krok.then(function () {
+      return VECERY.reduce(function (p, k) {
+        return p.then(function () {
+          $('upmsg').textContent = 'Skladám ZIP so všetkými nahrávkami: ' + (++hotovo) + ' z 24';
+          var blob = mam[k] ? Promise.resolve(mam[k]) : fetch(odkazy[k], { cache: 'no-store' }).then(function (x) {
+            if (!x.ok) throw new Error('Nepodarilo sa načítať ' + k + ' na poskladanie ZIP.');
+            return x.blob();
+          });
+          return blob.then(function (b) { zip.file('vecer-' + k.slice(5) + '.mp3', b); });
         });
-        return blob.then(function (b) { zip.file('vecer-' + k.slice(5) + '.mp3', b); });
-      });
-    }, Promise.resolve()).then(function () {
+      }, Promise.resolve());
+    }).then(function () {
       return zip.generateAsync({ type: 'blob', compression: 'STORE' });
     }).then(function (b) {
       // rovnaký názov ako doteraz, aby sa starý ZIP prepísal a v úložisku nezostal navyše
