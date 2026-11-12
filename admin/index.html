@@ -177,7 +177,7 @@ small{color:var(--muted)}
       var o = cur = r.objednavka;
       $('dTitle').textContent = o.cislo + ' · ' + kids(o);
       $('dBadge').className = 'badge b-' + o.status; $('dBadge').textContent = STAV[o.status] || o.status;
-      var rows = [['Zákazník', o.meno_zakaznika], ['E-mail', '<a href="mailto:' + esc(o.email) + '">' + esc(o.email) + '</a>'], ['Verzia', o.verzia === 'audio' ? 'PDF + audio' : 'PDF'],
+      var rows = [['Zákazník', esc(o.meno_zakaznika)], ['E-mail', '<a href="mailto:' + esc(o.email) + '">' + esc(o.email) + '</a>'], ['Verzia', o.verzia === 'audio' ? 'PDF + audio' : 'PDF'],
         ['Suma', eur(o.suma_cents) + (o.kod ? ' (kód ' + esc(o.kod) + ')' : '')], ['Zaplatené', when(o.zaplatene_at)], ['Dodať', o.vcas ? 'najneskôr 30. 11.' : 'do 3 pracovných dní'],
         ['Potvrdenie', o.e1_at ? 'odoslané ' + when(o.e1_at) : '<span class="err">neodišlo, pošli ho znova nižšie</span>'],
         ['Darček', o.darcek ? 'áno' : 'nie'], ['Venovanie', esc(o.venovanie || 'automatická veta')], ['Poznámka', esc(o.poznamka || '')]];
@@ -404,7 +404,8 @@ small{color:var(--muted)}
     };
     $('bCsv').onclick = function () {
       var list = vyber(); if (prazdne(list)) return;
-      var q = function (x) { return '"' + cisty(x).replace(/"/g, '""') + '"'; };
+      // bunka začínajúca =, +, - alebo @ by sa v Exceli spustila ako vzorec, preto dostane apostrof
+      var q = function (x) { var t = cisty(x); if (/^[=+\-@]/.test(t) && !/^-?\d/.test(t)) t = "'" + t; return '"' + t.replace(/"/g, '""') + '"'; };
       var rows = [['Číslo objednávky', 'Dátum platby', 'Zákazník', 'E-mail', 'Položka', 'Zľavový kód', 'Suma EUR', 'Spôsob úhrady'].map(q).join(';')];
       list.forEach(function (o) {
         rows.push([o.cislo, den(o.zaplatene_at).sk, o.meno_zakaznika, o.email, popis(o), o.kod || '', num(o.suma_cents), 'karta cez Stripe'].map(q).join(';'));
