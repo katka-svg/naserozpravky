@@ -252,27 +252,65 @@ small{color:var(--muted)}
       return uniq;
     });
   }
+  function nahrajSubory(items) {
+    return api('nahraj', { id: cur.id, subory: items.map(function (x) { return { kluc: x.kluc, nazov: x.file.name }; }) }).then(function (r) {
+      var map = {}, n = 0;
+      return r.nahraj.reduce(function (p, u) {
+        var it = items.find(function (x) { return x.kluc === u.kluc; });
+        return p.then(function () {
+          $('upmsg').textContent = 'Nahrávam ' + (++n) + ' z ' + r.nahraj.length + ': ' + it.file.name;
+          return sb.storage.from(u.bucket).uploadToSignedUrl(u.path, u.token, it.file, { contentType: it.file.type, upsert: true }).then(function (res) {
+            if (res.error) throw res.error;
+            map[u.kluc] = u.path;
+          });
+        });
+      }, Promise.resolve()).then(function () { return api('uloz', { id: cur.id, subory: map }); });
+    });
+  }
+  var VECERY = []; for (var v = 1; v <= 24; v++) VECERY.push('audio' + (v < 10 ? '0' : '') + v);
+  // ZIP na stiahnutie sa poskladá z aktuálnych 24 večerov: nové berie z práve nahratých súborov, ostatné stiahne z úložiska
+  function zlozZip(subory, items) {
+    var chyba = VECERY.filter(function (k) { return !subory[k]; });
+    if (chyba.length) return Promise.resolve({ subory: subory, status: cur.status, zip: 'caka', chyba: chyba.length });
+    var mam = {}; items.forEach(function (x) { if (/^audio\d\d$/.test(x.kluc)) mam[x.kluc] = x.file; });
+    var zip = new JSZip(), hotovo = 0;
+    return VECERY.reduce(function (p, k) {
+      return p.then(function () {
+        $('upmsg').textContent = 'Skladám ZIP so všetkými nahrávkami: ' + (++hotovo) + ' z 24';
+        var blob = mam[k] ? Promise.resolve(mam[k]) : sb.storage.from('vystupy').download(subory[k]).then(function (x) {
+          if (x.error || !x.data) throw new Error('Nepodarilo sa načítať ' + k + ' na poskladanie ZIP.');
+          return x.data;
+        });
+        return blob.then(function (b) { zip.file('vecer-' + k.slice(5) + '.mp3', b); });
+      });
+    }, Promise.resolve()).then(function () {
+      return zip.generateAsync({ type: 'blob', compression: 'STORE' });
+    }).then(function (b) {
+      // rovnaký názov ako doteraz, aby sa starý ZIP prepísal a v úložisku nezostal navyše
+      var meno = subory.audio ? subory.audio.split('/').pop() : cur.cislo + '-nahravky.zip';
+      return nahrajSubory([{ kluc: 'audio', file: new File([b], meno, { type: 'application/zip' }) }]);
+    }).then(function (r) { r.zip = 'ok'; return r; });
+  }
   function upload(fileList) {
     if (!cur) return;
     $('upmsg').className = 'msg'; $('upmsg').textContent = 'Pripravujem súbory…';
-    collect(fileList).then(function (items) {
+    var items = [];
+    collect(fileList).then(function (xs) {
+      items = xs;
       if (!items.length) throw new Error('Nenašiel som žiadny známy súbor. Názvy majú končiť napríklad na -citanie.pdf alebo obalka.jpg, nahrávky sú MP3 s číslom večera.');
-      return api('nahraj', { id: cur.id, subory: items.map(function (x) { return { kluc: x.kluc, nazov: x.file.name }; }) }).then(function (r) {
-        var map = {}, n = 0;
-        return r.nahraj.reduce(function (p, u) {
-          var it = items.find(function (x) { return x.kluc === u.kluc; });
-          return p.then(function () {
-            $('upmsg').textContent = 'Nahrávam ' + (++n) + ' z ' + r.nahraj.length + ': ' + it.file.name;
-            return sb.storage.from(u.bucket).uploadToSignedUrl(u.path, u.token, it.file, { contentType: it.file.type, upsert: true }).then(function (res) {
-              if (res.error) throw res.error;
-              map[u.kluc] = u.path;
-            });
-          });
-        }, Promise.resolve()).then(function () { return api('uloz', { id: cur.id, subory: map }); });
-      });
+      return nahrajSubory(items);
     }).then(function (r) {
       cur.subory = r.subory; cur.status = r.status;
-      $('upmsg').textContent = 'Hotovo, súbory sú nahraté.'; renderFiles();
+      var noveVecery = items.some(function (x) { return /^audio\d\d$/.test(x.kluc); });
+      var maZip = items.some(function (x) { return x.kluc === 'audio'; });
+      if (cur.verzia === 'audio' && noveVecery && !maZip) return zlozZip(r.subory, items);
+      return r;
+    }).then(function (r) {
+      cur.subory = r.subory; cur.status = r.status;
+      $('upmsg').textContent = r.zip === 'ok' ? 'Hotovo, súbory sú nahraté a ZIP na stiahnutie je poskladaný z aktuálnych nahrávok.'
+        : r.zip === 'caka' ? 'Hotovo, súbory sú nahraté. ZIP sa poskladá sám, keď budú nahraté všetky večery (chýba ešte ' + r.chyba + ').'
+        : 'Hotovo, súbory sú nahraté.';
+      renderFiles();
     }).catch(function (e) { $('upmsg').className = 'msg err'; $('upmsg').textContent = e.message || String(e); });
   }
 
