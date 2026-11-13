@@ -136,7 +136,7 @@ ol.v li.on .n{background:#1E2A5E;color:#fff;border-color:#1E2A5E}
   au.addEventListener('ended', function () { if (!zdroj) return; oznac(zdroj); ulozMiesto(zdroj, 0); kresli(); });
   au.addEventListener('timeupdate', function () {
     if (!zdroj || nacitava || !au.duration) return;
-    if (au.currentTime > au.duration * 0.9) oznac(zdroj);
+    if (au.currentTime > au.duration * 0.9 && !pocuvane()[zdroj]) { oznac(zdroj); ulozMiesto(zdroj, 0); kresli(); }
     // miesto sa ukladá každé 3 sekundy; tesne pred koncom sa zmaže, nech ďalšie spustenie ide od začiatku
     if (Math.abs(au.currentTime - ulozene) >= 3) { ulozene = au.currentTime; ulozMiesto(zdroj, au.currentTime > au.duration - 8 ? 0 : au.currentTime); }
   });
