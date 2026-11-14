@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#1E2A5E">
+<title>Ako sa vám páči rozprávka? · Naše rozprávky</title>
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="stylesheet" href="/assets/fonts.css">
+<style>
+[hidden]{display:none!important}
+body{margin:0;background:#FBF8F1;color:#2A2D3E;font-family:'DM Sans',Arial,sans-serif;line-height:1.5}
+main{max-width:560px;margin:0 auto;padding:32px 16px 60px}
+h1,h2{font-family:'Shantell Sans','Nunito',sans-serif;font-variation-settings:'INFM' 100,'BNCE' 35}
+h1{font-size:28px;line-height:1.2;margin:12px 0 6px}
+h2{font-size:20px;line-height:1.25;margin:0}
+.logo{display:flex;align-items:center;gap:10px;font-family:'Shantell Sans',sans-serif;font-variation-settings:'INFM' 100,'BNCE' 35;font-weight:700;font-size:20px;text-decoration:none;color:#2A2D3E}
+.card{background:#fff;border:1.6px solid #45454D;border-radius:24px 10px 22px 12px / 12px 22px 10px 24px;padding:16px;margin-top:18px;display:flex;flex-direction:column;gap:12px}
+.meta{color:#5A5F7A;margin:0}
+.err{color:#B3261E;font-weight:600;margin:0}
+.ok{color:#1F7A4D;font-weight:600;margin:0}
+.stars{display:flex;gap:6px}
+.stars button{flex:1;min-height:56px;border:1.6px solid #45454D;border-radius:14px;background:#fff;font-size:30px;line-height:1;color:#C9CCD9;cursor:pointer;padding:0}
+.stars button.on{background:#FFF4DF;color:#E0A21B}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opts label{display:flex;align-items:center;gap:12px;min-height:48px;padding:4px 12px;border:1.4px solid #C9CCD9;border-radius:14px;cursor:pointer}
+.opts input,.suhlas input{flex:none;width:22px;height:22px;accent-color:#1E2A5E}
+.opts label:has(input:checked){border-color:#45454D;background:#FFF4DF}
+textarea,input[type=text]{width:100%;box-sizing:border-box;font:inherit;color:inherit;padding:12px;border:1.4px solid #45454D;border-radius:14px;background:#fff}
+textarea{min-height:120px;resize:vertical}
+.suhlas{display:flex;align-items:flex-start;gap:12px;cursor:pointer}
+.suhlas input{margin-top:2px}
+button.btn{width:100%;padding:15px 18px;border:1.8px solid #45454D;border-radius:26px 10px 24px 12px / 12px 24px 10px 26px;background:#CF3E2A;color:#fff;font:inherit;font-weight:700;font-size:17px;cursor:pointer;margin-top:18px}
+button.btn:disabled{opacity:.6}
+.tip{background:#E3F4EC;border-radius:16px;padding:14px 16px;margin-top:18px}
+.tip p{margin:0}
+</style>
+</head>
+<body>
+<main>
+  <a class="logo" href="/"><img src="/assets/favicon.svg" width="30" height="30" alt="">Naše rozprávky</a>
+  <h1 id="t">Ako sa vám páči rozprávka?</h1>
+  <p class="meta" id="s">Načítavam…</p>
+
+  <form id="f" hidden novalidate>
+    <section class="card">
+      <h2 id="q1">Ako sa rozprávka páči?</h2>
+      <div class="stars" id="stars" role="radiogroup" aria-labelledby="q1"></div>
+      <p class="ok" id="sok" role="status" hidden></p>
+    </section>
+
+    <section class="card">
+      <h2 id="q2">Čo sa páči najviac?</h2>
+      <p class="meta">Môžete označiť aj viac možností.</p>
+      <div class="opts" id="najviac"></div>
+    </section>
+
+    <section class="card">
+      <h2>Akú rozprávku by ste chceli nabudúce?</h2>
+      <p class="meta">Môžete označiť aj viac možností.</p>
+      <div class="opts" id="nabuduce"></div>
+    </section>
+
+    <section class="card">
+      <h2><label for="veta">Čo by ste o rozprávke povedali kamarátke?</label></h2>
+      <textarea id="veta" maxlength="2000" placeholder="Stačí jedna veta."></textarea>
+      <label class="suhlas"><input type="checkbox" id="suhlas"><span>Súhlasím, aby ste moju vetu zverejnili na webe a v reklame. Uvediete len krstné meno a prvé písmeno priezviska.</span></label>
+      <div id="podpisBox" hidden>
+        <label for="podpis" class="meta">Podpis pri vete</label>
+        <input type="text" id="podpis" maxlength="60">
+      </div>
+    </section>
+
+    <p class="err" id="e" role="alert" style="margin-top:14px" hidden></p>
+    <button class="btn" id="b" type="submit">Odoslať</button>
+  </form>
+
+  <section id="hotovo" hidden>
+    <div class="card">
+      <h2>Ďakujeme, veľmi nám to pomáha.</h2>
+      <p style="margin:0">Každú odpoveď čítame. Ak by ste chceli niečo doplniť, stačí odpísať na e-mail od nás.</p>
+    </div>
+    <div class="tip" id="foto" hidden><p><b>Máte fotku vytlačenej rozprávky alebo pohľadnice?</b> Pošlite nám ju odpoveďou na náš e-mail, urobí nám veľkú radosť. Deti na nej byť nemusia.</p></div>
+  </section>
+</main>
+<script src="/assets/config.js"></script>
+<script>
+(function () {
+  var C = window.NR_CONFIG || {};
+  var q = new URLSearchParams(location.search);
+  var k = q.get('k') || '', h0 = parseInt(q.get('h') || '', 10);
+  var $ = function (id) { return document.getElementById(id); };
+  var NAJVIAC = [['meno', 'Svoje meno v príbehu'], ['audio', 'Počúvanie nahrávok'], ['obrazky', 'Obrázky'], ['postavy', 'Zvieratká a postavy'], ['ulohy', 'Úlohy po každej časti'], ['omalovanky', 'Omaľovánky']];
+  var NABUDUCE = [['narodeniny', 'Narodeninovú'], ['velka_noc', 'Veľkonočnú'], ['emocie', 'O emóciách (hnev, strach, smútok)'], ['skolka', 'O škôlke alebo škole'], ['ina', 'Inú, napíšem nižšie']];
+  var hviezdicky = 0;
+
+  function volaj(telo) {
+    telo.k = k;
+    return fetch(C.supabase + '/functions/v1/hodnotenie', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', apikey: C.anon, Authorization: 'Bearer ' + C.anon },
+      body: JSON.stringify(telo)
+    }).then(function (r) { return r.json().then(function (j) { if (!r.ok) throw new Error(j.chyba || 'Odkaz nefunguje.'); return j; }); });
+  }
+  function chyba(m) { var e = $('s'); e.className = 'err'; e.textContent = m; e.hidden = false; }
+  function moznosti(kam, zoznam, vybrane) {
+    zoznam.forEach(function (m) {
+      var l = document.createElement('label'), i = document.createElement('input'), sp = document.createElement('span');
+      i.type = 'checkbox'; i.value = m[0]; i.checked = (vybrane || []).indexOf(m[0]) >= 0;
+      sp.textContent = m[1]; l.appendChild(i); l.appendChild(sp); $(kam).appendChild(l);
+    });
+  }
+  function oznacene(kam) { return Array.prototype.filter.call($(kam).querySelectorAll('input'), function (i) { return i.checked; }).map(function (i) { return i.value; }); }
+  function kresliHviezdy() {
+    Array.prototype.forEach.call($('stars').children, function (b, i) {
+      b.className = i < hviezdicky ? 'on' : '';
+      b.setAttribute('aria-checked', i + 1 === hviezdicky ? 'true' : 'false');
+    });
+  }
+  function ulozHviezdy(n) {
+    hviezdicky = n; kresliHviezdy();
+    $('sok').hidden = true;
+    return volaj({ akcia: 'uloz', hviezdicky: n }).then(function () {
+      $('sok').textContent = 'Zapísané: ' + n + ' z 5. Ďakujeme!';
+      $('sok').hidden = false;
+    }).catch(function (x) { $('e').textContent = x.message; $('e').hidden = false; });
+  }
+
+  if (!k) { chyba('V odkaze chýba kľúč. Použite, prosím, odkaz z e-mailu.'); return; }
+
+  for (var i = 1; i <= 5; i++) (function (n) {
+    var b = document.createElement('button');
+    b.type = 'button'; b.textContent = '★';
+    b.setAttribute('role', 'radio'); b.setAttribute('aria-label', n + ' z 5');
+    b.onclick = function () { ulozHviezdy(n); };
+    $('stars').appendChild(b);
+  })(i);
+
+  $('suhlas').onchange = function () { $('podpisBox').hidden = !this.checked; };
+
+  volaj({ akcia: 'nacitaj' }).then(function (r) {
+    var o = r.odpoved || {};
+    $('t').textContent = r.nazov;
+    $('s').hidden = true;
+    if (r.komu) {
+      $('q1').textContent = 'Ako sa rozprávka páči ' + r.komu + '?';
+      $('q2').textContent = 'Čo sa ' + r.komu + ' páči najviac?';
+    }
+    moznosti('najviac', NAJVIAC.filter(function (m) { return m[0] !== 'audio' || r.audio; }), o.najviac);
+    moznosti('nabuduce', NABUDUCE, o.nabuduce);
+    $('veta').value = o.veta || '';
+    $('suhlas').checked = !!o.suhlas;
+    $('podpis').value = o.podpis || r.podpis_navrh || '';
+    $('podpisBox').hidden = !o.suhlas;
+    hviezdicky = o.hviezdicky || 0; kresliHviezdy();
+    $('f').hidden = false;
+    // klik na hviezdičky v e-maile sa uloží hneď, zvyšok formulára je dobrovoľný
+    if (h0 >= 1 && h0 <= 5 && h0 !== hviezdicky) ulozHviezdy(h0);
+    else if (hviezdicky) { $('sok').textContent = 'Zapísané: ' + hviezdicky + ' z 5. Ďakujeme!'; $('sok').hidden = false; }
+  }).catch(function (x) { chyba(x.message); });
+
+  $('f').onsubmit = function (ev) {
+    ev.preventDefault();
+    $('e').hidden = true;
+    if (!hviezdicky) { $('e').textContent = 'Označte, prosím, aspoň počet hviezdičiek.'; $('e').hidden = false; $('stars').scrollIntoView({ block: 'center' }); return; }
+    var suhlas = $('suhlas').checked;
+    if (suhlas && !$('veta').value.trim()) { $('e').textContent = 'Súhlas so zverejnením sa týka vašej vety. Napíšte ju, prosím, alebo súhlas odškrtnite.'; $('e').hidden = false; return; }
+    $('b').disabled = true; $('b').textContent = 'Odosielam…';
+    volaj({
+      akcia: 'uloz', dokoncit: true, hviezdicky: hviezdicky, najviac: oznacene('najviac'), nabuduce: oznacene('nabuduce'),
+      veta: $('veta').value, suhlas: suhlas, podpis: suhlas ? $('podpis').value : ''
+    }).then(function () {
+      $('f').hidden = true; $('hotovo').hidden = false; $('foto').hidden = hviezdicky < 5;
+      window.scrollTo(0, 0);
+    }).catch(function (x) {
+      $('e').textContent = x.message; $('e').hidden = false;
+      $('b').disabled = false; $('b').textContent = 'Odoslať';
+    });
+  };
+})();
+</script>
+</body>
+</html>
