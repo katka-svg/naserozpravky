@@ -119,11 +119,18 @@ ol.v li.on .n{background:#1E2A5E;color:#fff;border-color:#1E2A5E}
   var chk = $('auto');
   try { chk.checked = localStorage.getItem('nr-auto-dalsi') !== '0'; } catch (e) { chk.checked = true; }
   chk.onchange = function () { try { localStorage.setItem('nr-auto-dalsi', chk.checked ? '1' : '0'); } catch (e) {} };
-  var dalsiaAdr = null; // vopred pripravena adresa dalsieho vecera, aby isiel aj pri zhasnutom mobile
-  function adresaVecera(n) {
-    if (dalsiaAdr && dalsiaAdr.n === n && dalsiaAdr.u && Date.now() - dalsiaAdr.cas < 10 * 60 * 1000) return Promise.resolve(dalsiaAdr.u);
-    return adresa('audio' + (n < 10 ? '0' : '') + n);
+  // Adresy susednych vecerov si drzime vopred pripravene. Na zamknutom iPhone sa zvuk spusti len vtedy,
+  // ked sa nahravka zmeni hned po stlaceni sipky, bez cakania na internet.
+  var pripravene = {}; // n -> { u, cas }
+  function cerstva(n) { var x = pripravene[n]; return x && x.u && Date.now() - x.cas < 12 * 60 * 1000 ? x.u : null; }
+  function priprav(n) {
+    if (n < 1 || n > 24) return;
+    var x = pripravene[n];
+    if (x && (x.ide || (x.u && Date.now() - x.cas < 8 * 60 * 1000))) return;
+    pripravene[n] = { ide: true };
+    adresa('audio' + (n < 10 ? '0' : '') + n).then(function (u) { pripravene[n] = { u: u, cas: Date.now() }; }).catch(function () { delete pripravene[n]; });
   }
+  function pripravSusedov() { if (!hra) return; if (hra > 1) priprav(hra - 1); if (hra < posledny()) priprav(hra + 1); }
   // Nazov a tlacidla na zamknutej obrazovke (iPhone, Android)
   function relacia(n) {
     if (!('mediaSession' in navigator)) return;
@@ -141,17 +148,26 @@ ol.v li.on .n{background:#1E2A5E;color:#fff;border-color:#1E2A5E}
   function pusti(n) {
     $('aerr').hidden = true;
     if (n === hra && au.src) { if (au.paused) au.play(); else au.pause(); return; }
-    if (zdroj && !au.paused) { au.pause(); if (au.duration) ulozMiesto(zdroj, au.currentTime > au.duration - 8 ? 0 : au.currentTime); }
+    // bez pauzy: na zamknutom iPhone by pauza ukoncila zvuk a dalsi vecer by sa uz nespustil
+    if (zdroj && !au.paused && au.duration) ulozMiesto(zdroj, au.currentTime > au.duration - 8 ? 0 : au.currentTime);
     nacitava = true;
     hra = n; $('barT').textContent = n + '. december · ' + NAZVY[n - 1]; $('bar').hidden = false; kresli(); relacia(n);
-    adresaVecera(n).then(function (u) {
+    function spusti(u) {
       // pokračovať tam, kde sa prestalo (o 3 sekundy skôr, nech dieťa nestratí niť)
       var od = Math.max(0, (miesta()[n] || 0) - 3);
       zdroj = n; ulozene = od;
       au.src = u + (od ? '#t=' + od : '');
       if (od) au.addEventListener('loadedmetadata', function f() { au.removeEventListener('loadedmetadata', f); if (au.currentTime < od - 2) au.currentTime = od; });
-      return au.play();
-    }).catch(function () {
+      var pr = au.play();
+      pripravSusedov();
+      return pr;
+    }
+    var hotova = cerstva(n);
+    // ak je adresa pripravena, spusti sa hned v tom istom kroku (iPhone to inak nedovoli)
+    var beh;
+    if (hotova) { try { beh = Promise.resolve(spusti(hotova)); } catch (e) { beh = Promise.reject(e); } }
+    else beh = adresa('audio' + (n < 10 ? '0' : '') + n).then(spusti);
+    beh.catch(function () {
       nacitava = false; zdroj = 0;
       hra = 0; $('bar').hidden = true; kresli();
       $('aerr').textContent = 'Táto nahrávka sa teraz nedá prehrať. Skúste to znova, alebo si nižšie stiahnite všetky nahrávky naraz.';
@@ -167,14 +183,8 @@ ol.v li.on .n{background:#1E2A5E;color:#fff;border-color:#1E2A5E}
     // pri zhasnutej obrazovke hned (inak by iPhone zvuk uspal), inak po kratkej pauze
     setTimeout(function () { if (au.ended && hra === n - 1) pusti(n); }, document.hidden ? 0 : 2500);
   });
-  au.addEventListener('timeupdate', function () {
-    var n = zdroj + 1;
-    if (!zdroj || nacitava || !au.duration || !chk.checked || n > posledny()) return;
-    if (au.duration - au.currentTime < 60 && !(dalsiaAdr && dalsiaAdr.n === n)) {
-      dalsiaAdr = { n: n };
-      adresa('audio' + (n < 10 ? '0' : '') + n).then(function (u) { dalsiaAdr = { n: n, u: u, cas: Date.now() }; }).catch(function () { dalsiaAdr = null; });
-    }
-  });
+  // pocas hrania udrziavame adresy susedov cerstve (podpisane adresy platia 15 minut)
+  au.addEventListener('timeupdate', function () { if (zdroj && !nacitava) pripravSusedov(); });
   au.addEventListener('timeupdate', function () {
     if (!zdroj || nacitava || !au.duration) return;
     if (au.currentTime > au.duration * 0.9 && !pocuvane()[zdroj]) { oznac(zdroj); ulozMiesto(zdroj, 0); kresli(); }
