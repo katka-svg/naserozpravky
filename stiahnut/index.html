@@ -44,6 +44,8 @@ ol.v li.on .n{background:#1E2A5E;color:#fff;border-color:#1E2A5E}
 #bar div{max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:8px}
 #bar b{font-family:'Shantell Sans','Nunito',sans-serif;font-variation-settings:'INFM' 100,'BNCE' 35;font-size:17px;line-height:1.2}
 #bar audio{width:100%;height:40px}
+#bar label{display:flex;align-items:center;gap:8px;font-size:14px;opacity:.9;cursor:pointer}
+#bar input{width:18px;height:18px;margin:0;accent-color:#FFC94D}
 .tip{background:#EEF3F8;border-radius:16px;padding:0 14px;font-size:15px;color:#3E4258}
 .tip summary{cursor:pointer;font-weight:700;padding:12px 0;min-height:24px}
 .tip p{margin:0 0 10px}
@@ -74,7 +76,7 @@ ol.v li.on .n{background:#1E2A5E;color:#fff;border-color:#1E2A5E}
 
   <p class="meta" style="margin-top:18px">Ak niečo nejde, odpíšte na e-mail od nás.</p>
 </main>
-<div id="bar" hidden><div><b id="barT"></b><audio id="au" controls preload="none"></audio></div></div>
+<div id="bar" hidden><div><b id="barT"></b><audio id="au" controls preload="none"></audio><label><input type="checkbox" id="auto"> Po dohraní pokračovať ďalším večerom</label></div></div>
 <script src="/assets/config.js"></script>
 <script>
 (function () {
@@ -112,13 +114,37 @@ ol.v li.on .n{background:#1E2A5E;color:#fff;border-color:#1E2A5E}
       li.querySelector('.t span').textContent = n + '. december' + (p[n] ? ' · vypočuté' : m[n] ? ' · pokračovať od ' + cas(m[n]) : '');
     });
   }
+  // Pokracovanie dalsim vecerom: od 1. do 24. decembra len po dnesny vecer, inak az do konca.
+  function posledny() { var d = new Date(); return d.getMonth() === 11 && d.getDate() <= 24 ? d.getDate() : 24; }
+  var chk = $('auto');
+  try { chk.checked = localStorage.getItem('nr-auto-dalsi') !== '0'; } catch (e) { chk.checked = true; }
+  chk.onchange = function () { try { localStorage.setItem('nr-auto-dalsi', chk.checked ? '1' : '0'); } catch (e) {} };
+  var dalsiaAdr = null; // vopred pripravena adresa dalsieho vecera, aby isiel aj pri zhasnutom mobile
+  function adresaVecera(n) {
+    if (dalsiaAdr && dalsiaAdr.n === n && dalsiaAdr.u && Date.now() - dalsiaAdr.cas < 10 * 60 * 1000) return Promise.resolve(dalsiaAdr.u);
+    return adresa('audio' + (n < 10 ? '0' : '') + n);
+  }
+  // Nazov a tlacidla na zamknutej obrazovke (iPhone, Android)
+  function relacia(n) {
+    if (!('mediaSession' in navigator)) return;
+    var ms = navigator.mediaSession;
+    try {
+      ms.metadata = new MediaMetadata({ title: n + '. december · ' + NAZVY[n - 1], artist: 'Tajomstvo Vianoc', album: 'Naše rozprávky',
+        artwork: [{ src: '/assets/icon-512.png', sizes: '512x512', type: 'image/png' }] });
+    } catch (e) {}
+    function h(akcia, fn) { try { ms.setActionHandler(akcia, fn); } catch (e) {} }
+    h('play', function () { au.play(); });
+    h('pause', function () { au.pause(); });
+    h('nexttrack', n < posledny() ? function () { pusti(hra + 1); } : null);
+    h('previoustrack', n > 1 ? function () { pusti(hra - 1); } : null);
+  }
   function pusti(n) {
     $('aerr').hidden = true;
     if (n === hra && au.src) { if (au.paused) au.play(); else au.pause(); return; }
     if (zdroj && !au.paused) { au.pause(); if (au.duration) ulozMiesto(zdroj, au.currentTime > au.duration - 8 ? 0 : au.currentTime); }
     nacitava = true;
-    hra = n; $('barT').textContent = n + '. december · ' + NAZVY[n - 1]; $('bar').hidden = false; kresli();
-    adresa('audio' + (n < 10 ? '0' : '') + n).then(function (u) {
+    hra = n; $('barT').textContent = n + '. december · ' + NAZVY[n - 1]; $('bar').hidden = false; kresli(); relacia(n);
+    adresaVecera(n).then(function (u) {
       // pokračovať tam, kde sa prestalo (o 3 sekundy skôr, nech dieťa nestratí niť)
       var od = Math.max(0, (miesta()[n] || 0) - 3);
       zdroj = n; ulozene = od;
@@ -134,7 +160,21 @@ ol.v li.on .n{background:#1E2A5E;color:#fff;border-color:#1E2A5E}
   }
   ['play', 'pause'].forEach(function (ev) { au.addEventListener(ev, kresli); });
   au.addEventListener('playing', function () { nacitava = false; });
-  au.addEventListener('ended', function () { if (!zdroj) return; oznac(zdroj); ulozMiesto(zdroj, 0); kresli(); });
+  au.addEventListener('ended', function () {
+    if (!zdroj) return; oznac(zdroj); ulozMiesto(zdroj, 0); kresli();
+    var n = zdroj + 1;
+    if (!chk.checked || n > posledny()) return;
+    // pri zhasnutej obrazovke hned (inak by iPhone zvuk uspal), inak po kratkej pauze
+    setTimeout(function () { if (au.ended && hra === n - 1) pusti(n); }, document.hidden ? 0 : 2500);
+  });
+  au.addEventListener('timeupdate', function () {
+    var n = zdroj + 1;
+    if (!zdroj || nacitava || !au.duration || !chk.checked || n > posledny()) return;
+    if (au.duration - au.currentTime < 60 && !(dalsiaAdr && dalsiaAdr.n === n)) {
+      dalsiaAdr = { n: n };
+      adresa('audio' + (n < 10 ? '0' : '') + n).then(function (u) { dalsiaAdr = { n: n, u: u, cas: Date.now() }; }).catch(function () { dalsiaAdr = null; });
+    }
+  });
   au.addEventListener('timeupdate', function () {
     if (!zdroj || nacitava || !au.duration) return;
     if (au.currentTime > au.duration * 0.9 && !pocuvane()[zdroj]) { oznac(zdroj); ulozMiesto(zdroj, 0); kresli(); }
