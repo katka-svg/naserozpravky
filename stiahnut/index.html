@@ -140,17 +140,27 @@ ol.v li.on .n{background:#1E2A5E;color:#fff;border-color:#1E2A5E}
         artwork: [{ src: '/assets/icon-512.png', sizes: '512x512', type: 'image/png' }] });
     } catch (e) {}
     function h(akcia, fn) { try { ms.setActionHandler(akcia, fn); } catch (e) {} }
-    h('play', function () { au.play(); });
-    h('pause', function () { au.pause(); });
+    h('play', function () { drzZvuk(); au.play(); });
+    h('pause', function () { au.pause(); pustiZvuk(); });
     h('nexttrack', n < posledny() ? function () { pusti(hra + 1); } : null);
-    h('previoustrack', n > 1 ? function () { pusti(hra - 1); } : null);
+    // pri 1. vecere sipka dozadu vrati vecer na zaciatok
+    h('previoustrack', function () { if (hra > 1) pusti(hra - 1); else { au.currentTime = 0; } });
   }
+  // iPhone so zamknutou obrazovkou nedovoli spustit novu nahravku, ak medzitym zvuk na chvilu stichne.
+  // Preto pocas prehravania pod rozpravkou potichu bezi nahravka ticha, ktora drzi zvuk zapnuty.
+  var ticho = new Audio('/assets/audio/ticho.mp3'); ticho.loop = true; ticho.preload = 'auto';
+  function drzZvuk() { try { var p = ticho.play(); if (p && p.catch) p.catch(function () {}); } catch (e) {} }
+  function pustiZvuk() { try { ticho.pause(); } catch (e) {} }
+  function pozicia() {
+    try { if (au.duration && isFinite(au.duration)) navigator.mediaSession.setPositionState({ duration: au.duration, position: Math.min(au.currentTime, au.duration), playbackRate: au.playbackRate || 1 }); } catch (e) {}
+  }
+  ['loadedmetadata', 'play', 'seeked', 'ratechange'].forEach(function (ev) { au.addEventListener(ev, pozicia); });
   function pusti(n) {
     $('aerr').hidden = true;
-    if (n === hra && au.src) { if (au.paused) au.play(); else au.pause(); return; }
+    if (n === hra && au.src) { if (au.paused) { drzZvuk(); au.play(); } else { au.pause(); pustiZvuk(); } return; }
     // bez pauzy: na zamknutom iPhone by pauza ukoncila zvuk a dalsi vecer by sa uz nespustil
     if (zdroj && !au.paused && au.duration) ulozMiesto(zdroj, au.currentTime > au.duration - 8 ? 0 : au.currentTime);
-    nacitava = true;
+    nacitava = true; drzZvuk();
     hra = n; $('barT').textContent = n + '. december · ' + NAZVY[n - 1]; $('bar').hidden = false; kresli(); relacia(n);
     function spusti(u) {
       // pokračovať tam, kde sa prestalo (o 3 sekundy skôr, nech dieťa nestratí niť)
@@ -168,18 +178,18 @@ ol.v li.on .n{background:#1E2A5E;color:#fff;border-color:#1E2A5E}
     if (hotova) { try { beh = Promise.resolve(spusti(hotova)); } catch (e) { beh = Promise.reject(e); } }
     else beh = adresa('audio' + (n < 10 ? '0' : '') + n).then(spusti);
     beh.catch(function () {
-      nacitava = false; zdroj = 0;
+      nacitava = false; zdroj = 0; pustiZvuk();
       hra = 0; $('bar').hidden = true; kresli();
       $('aerr').textContent = 'Táto nahrávka sa teraz nedá prehrať. Skúste to znova, alebo si nižšie stiahnite všetky nahrávky naraz.';
       $('aerr').hidden = false;
     });
   }
   ['play', 'pause'].forEach(function (ev) { au.addEventListener(ev, kresli); });
-  au.addEventListener('playing', function () { nacitava = false; });
+  au.addEventListener('playing', function () { nacitava = false; drzZvuk(); });
   au.addEventListener('ended', function () {
     if (!zdroj) return; oznac(zdroj); ulozMiesto(zdroj, 0); kresli();
     var n = zdroj + 1;
-    if (!chk.checked || n > posledny()) return;
+    if (!chk.checked || n > posledny()) { pustiZvuk(); return; }
     // pri zhasnutej obrazovke hned (inak by iPhone zvuk uspal), inak po kratkej pauze
     setTimeout(function () { if (au.ended && hra === n - 1) pusti(n); }, document.hidden ? 0 : 2500);
   });
@@ -191,7 +201,7 @@ ol.v li.on .n{background:#1E2A5E;color:#fff;border-color:#1E2A5E}
     // miesto sa ukladá každé 3 sekundy; tesne pred koncom sa zmaže, nech ďalšie spustenie ide od začiatku
     if (Math.abs(au.currentTime - ulozene) >= 3) { ulozene = au.currentTime; ulozMiesto(zdroj, au.currentTime > au.duration - 8 ? 0 : au.currentTime); }
   });
-  au.addEventListener('pause', function () { if (zdroj && !nacitava && au.duration && !au.ended) { ulozMiesto(zdroj, au.currentTime > au.duration - 8 ? 0 : au.currentTime); kresli(); } });
+  au.addEventListener('pause', function () { if (!nacitava && !au.ended) pustiZvuk(); if (zdroj && !nacitava && au.duration && !au.ended) { ulozMiesto(zdroj, au.currentTime > au.duration - 8 ? 0 : au.currentTime); kresli(); } });
 
   get('subory?k=' + encodeURIComponent(k)).then(function (r) {
     $('t').textContent = r.nazov;
