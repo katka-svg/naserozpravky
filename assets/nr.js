@@ -4,6 +4,45 @@
   var CFG = window.NR_CONFIG || {};
   var API = (CFG.api || '').replace(/\/$/, '');
 
+  // ---------------------------------------------------------------- zdroj návštevy (z ktorej reklamy prišla objednávka)
+  // Bez cookies a bez ukladania do prehliadača: označenie z odkazu reklamy (utm_*) sa len prenesie
+  // v adrese na ďalšie stránky webu a pri objednávke sa pošle spolu s ňou. Chyba tu nesmie zastaviť web.
+  var ZDROJ_KLUCE = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content'];
+  var ZDROJ = (function () {
+    var z = {};
+    try {
+      var q = new URLSearchParams(location.search);
+      ZDROJ_KLUCE.forEach(function (k) {
+        var v = String(q.get(k) || '').replace(/[^\w.\-]/g, '').slice(0, 60);
+        if (v) z[k] = v;
+      });
+    } catch (e) {}
+    return z;
+  })();
+  if (ZDROJ.utm_source) {
+    document.addEventListener('click', function (e) {
+      try {
+        var a = e.target && e.target.closest && e.target.closest('a[href]');
+        if (!a) return;
+        var u = new URL(a.getAttribute('href'), location.href);
+        if (u.origin !== location.origin || u.pathname === location.pathname) return;
+        Object.keys(ZDROJ).forEach(function (k) { if (!u.searchParams.has(k)) u.searchParams.set(k, ZDROJ[k]); });
+        a.setAttribute('href', u.pathname + u.search + u.hash);
+      } catch (err) {}
+    }, true);
+  }
+  // po uložení objednávky sa zdroj zapíše samostatne; objednávku ani platbu nijako nebrzdí
+  function poslatZdroj(cislo) {
+    try {
+      if (!ZDROJ.utm_source || !cislo || !CFG.supabase) return;
+      var h = { 'content-type': 'application/json' };
+      if (CFG.anon) { h.apikey = CFG.anon; h.Authorization = 'Bearer ' + CFG.anon; }
+      fetch(CFG.supabase.replace(/\/$/, '') + '/functions/v1/zdroj', {
+        method: 'POST', headers: h, keepalive: true, body: JSON.stringify({ cislo: cislo, zdroj: ZDROJ })
+      }).catch(function () {});
+    } catch (e) {}
+  }
+
   function req(method, path, body) {
     var opt = { method: method, headers: {} };
     if (CFG.anon) { opt.headers.apikey = CFG.anon; opt.headers.Authorization = 'Bearer ' + CFG.anon; }
@@ -118,6 +157,7 @@
           venovanie: f.venovanie || '', poznamka: f.poznamka || '', kod: s.code || '',
           suhlasy: { vop: true, oou: true, zacat: !!f.suhlasZacat }
         }).then(function (r) {
+          poslatZdroj(r && r.cislo);
           try { localStorage.setItem('rozpravka-cislo', r.cislo); localStorage.setItem('rozpravka-suma', String(st.total || 0)); } catch (e) {}
           if (r.zaplatene) {
             location.href = '/dakujeme/?objednavka=' + encodeURIComponent(r.cislo) + '&session_id=' + encodeURIComponent(r.overenie || '');
