@@ -252,8 +252,9 @@ small{color:var(--muted)}
       return uniq;
     });
   }
-  function nahrajSubory(items) {
-    return api('nahraj', { id: cur.id, subory: items.map(function (x) { return { kluc: x.kluc, nazov: x.file.name }; }) }).then(function (r) {
+  // o = objednávka, pre ktorú sa nahráva; nie aktuálne otvorená (počas nahrávania sa dá prekliknúť na inú)
+  function nahrajSubory(o, items) {
+    return api('nahraj', { id: o.id, subory: items.map(function (x) { return { kluc: x.kluc, nazov: x.file.name }; }) }).then(function (r) {
       var map = {}, n = 0;
       return r.nahraj.reduce(function (p, u) {
         var it = items.find(function (x) { return x.kluc === u.kluc; });
@@ -264,14 +265,14 @@ small{color:var(--muted)}
             map[u.kluc] = u.path;
           });
         });
-      }, Promise.resolve()).then(function () { return api('uloz', { id: cur.id, subory: map }); });
+      }, Promise.resolve()).then(function () { return api('uloz', { id: o.id, subory: map }); });
     });
   }
   var VECERY = []; for (var v = 1; v <= 24; v++) VECERY.push('audio' + (v < 10 ? '0' : '') + v);
   // ZIP na stiahnutie sa poskladá z aktuálnych 24 večerov: nové berie z práve nahratých súborov, ostatné stiahne z úložiska
-  function zlozZip(subory, items) {
+  function zlozZip(o, subory, items) {
     var chyba = VECERY.filter(function (k) { return !subory[k]; });
-    if (chyba.length) return Promise.resolve({ subory: subory, status: cur.status, zip: 'caka', chyba: chyba.length });
+    if (chyba.length) return Promise.resolve({ subory: subory, status: o.status, zip: 'caka', chyba: chyba.length });
     var mam = {}; items.forEach(function (x) { if (/^audio\d\d$/.test(x.kluc)) mam[x.kluc] = x.file; });
     var zip = new JSZip(), hotovo = 0, odkazy = {};
     var stiahnut = VECERY.filter(function (k) { return !mam[k]; });
@@ -295,30 +296,31 @@ small{color:var(--muted)}
       return zip.generateAsync({ type: 'blob', compression: 'STORE' });
     }).then(function (b) {
       // rovnaký názov ako doteraz, aby sa starý ZIP prepísal a v úložisku nezostal navyše
-      var meno = subory.audio ? subory.audio.split('/').pop() : cur.cislo + '-nahravky.zip';
-      return nahrajSubory([{ kluc: 'audio', file: new File([b], meno, { type: 'application/zip' }) }]);
+      var meno = subory.audio ? subory.audio.split('/').pop() : o.cislo + '-nahravky.zip';
+      return nahrajSubory(o, [{ kluc: 'audio', file: new File([b], meno, { type: 'application/zip' }) }]);
     }).then(function (r) { r.zip = 'ok'; return r; });
   }
   function upload(fileList) {
     if (!cur) return;
-    $('upmsg').className = 'msg'; $('upmsg').textContent = 'Pripravujem súbory…';
+    var o = cur;   // nahrávanie patrí tejto objednávke, aj keby sa medzitým otvorila iná
+    $('upmsg').className = 'msg'; $('upmsg').textContent = 'Pripravujem súbory pre ' + o.cislo + '…';
     var items = [];
     collect(fileList).then(function (xs) {
       items = xs;
       if (!items.length) throw new Error('Nenašiel som žiadny známy súbor. Názvy majú končiť napríklad na -citanie.pdf alebo obalka.jpg, nahrávky sú MP3 s číslom večera.');
-      return nahrajSubory(items);
+      return nahrajSubory(o, items);
     }).then(function (r) {
-      cur.subory = r.subory; cur.status = r.status;
+      o.subory = r.subory; o.status = r.status;
       var noveVecery = items.some(function (x) { return /^audio\d\d$/.test(x.kluc); });
       var maZip = items.some(function (x) { return x.kluc === 'audio'; });
-      if (cur.verzia === 'audio' && noveVecery && !maZip) return zlozZip(r.subory, items);
+      if (o.verzia === 'audio' && noveVecery && !maZip) return zlozZip(o, r.subory, items);
       return r;
     }).then(function (r) {
-      cur.subory = r.subory; cur.status = r.status;
-      $('upmsg').textContent = r.zip === 'ok' ? 'Hotovo, súbory sú nahraté a ZIP na stiahnutie je poskladaný z aktuálnych nahrávok.'
+      o.subory = r.subory; o.status = r.status;
+      $('upmsg').textContent = o.cislo + ': ' + (r.zip === 'ok' ? 'Hotovo, súbory sú nahraté a ZIP na stiahnutie je poskladaný z aktuálnych nahrávok.'
         : r.zip === 'caka' ? 'Hotovo, súbory sú nahraté. ZIP sa poskladá sám, keď budú nahraté všetky večery (chýba ešte ' + r.chyba + ').'
-        : 'Hotovo, súbory sú nahraté.';
-      renderFiles();
+        : 'Hotovo, súbory sú nahraté.');
+      if (cur === o) renderFiles();
     }).catch(function (e) { $('upmsg').className = 'msg err'; $('upmsg').textContent = e.message || String(e); });
   }
 
